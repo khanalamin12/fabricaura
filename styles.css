@@ -478,8 +478,8 @@ body.dark-mode .subcat-tab.active{background:linear-gradient(135deg,var(--gold),
 .detail-stars{color:var(--gold);font-size:.83rem;margin-bottom:11px;}
 .detail-price{font-size:1.4rem;font-weight:700;color:var(--crimson);margin-bottom:3px;}
 .detail-price-old{font-size:.88rem;color:var(--gray);text-decoration:line-through;margin-bottom:14px;}
-.detail-desc{font-size:.85rem;color:var(--gray);line-height:1.62;margin-bottom:20px;}
-.order-now-btn{flex:1.4;background:var(--crimson);color:#fff;border:none;border-radius:11px;padding:14px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s;}
+.detail-desc{font-size:.85rem;color:var(--gray);line-height:1.62;margin-bottom:20px;
+.order-now-btn{flex:1.4;background:var(--crimson);color:#fff;border:none;border-radius:11px;padding:14px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s; position:stikey}
 .order-now-btn:hover{background:var(--crimson-dark);}
 
 /* ── ORDER FORM ──────────────────────────────────────────────────── */
