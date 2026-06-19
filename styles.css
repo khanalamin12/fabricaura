@@ -621,7 +621,7 @@ body.dark-mode .subcat-tab.active{background:linear-gradient(135deg,var(--gold),
 /* ── OVERLAY & DRAWERS ───────────────────────────────────────────── */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;}
 .overlay.open{opacity:1;pointer-events:all;}
-.drawer{position:fixed;bottom:0;left:0;right:0;z-index:201;background:var(--white);border-radius:20px 20px 0 0;padding:20px;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto;}
+.drawer{position:fixed;bottom:0;left:0;right:0;z-index:301;background:var(--white);border-radius:20px 20px 0 0;padding:20px;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto;}
 #orderDrawer{top:0;border-radius:0;max-height:100vh;height:100vh;padding-bottom:30px;}
 .drawer.open{transform:translateY(0);}
 .drawer-handle{width:38px;height:4px;background:var(--light-gray);border-radius:2px;margin:0 auto 18px;}
