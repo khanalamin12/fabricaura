@@ -43,4 +43,21 @@ const PANTS_PRODUCTS = [
 
   // ── ──
 
+  {
+    id: 2002,
+    code: 'PT-001',
+    name: 'premium watch',
+    fabric: 'yyy',
+    price: 333, old: 555,
+    section: 'pants',
+    subcategory: 'cargo-pants',
+    badge: 'new', stars: 5,
+    icon: 'fa-shirt', label: '',
+    photos: [
+      '1pA67M15CZj6zfrwU1i4TbfrmnGsj6pwg',
+    ],
+    noColour: true,
+    desc: 'uuu'
+  },
+
 ];
