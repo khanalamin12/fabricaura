@@ -1,3 +1,6 @@
 [build]
   functions = "netlify/functions"
   publish = "."
+
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "GITHUB_TOKEN,ADMIN_PASSWORD,GITHUB_OWNER,GITHUB_REPO,GITHUB_BRANCH"
