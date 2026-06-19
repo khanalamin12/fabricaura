@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Product Manager</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --border:#e2e6ec; --text:#1b2330;
+    --muted:#6b7585; --accent:#2952cc; --accent-h:#1f3fa3; --accent-soft:#eef2ff;
+    --ok:#1c8a5b; --ok-bg:#e9f7f0; --err:#c8323c; --err-bg:#fdecee;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:0 0 80px;
+  }
+  .topbar{
+    background:var(--card); border-bottom:1px solid var(--border);
+    padding:18px 16px; position:sticky; top:0; z-index:5;
+  }
+  .topbar-inner{max-width:640px; margin:0 auto; display:flex; align-items:center; gap:10px;}
+  .topbar .logo{
+    width:34px; height:34px; border-radius:9px; background:var(--accent);
+    color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:15px; flex-shrink:0;
+  }
+  .topbar h1{font-size:16px; margin:0; font-weight:600; letter-spacing:.1px;}
+  .topbar .sub{color:var(--muted); font-size:12px; margin:0;}
+
+  .wrap{max-width:640px; margin:0 auto; padding:20px 16px 0;}
+  .lead{color:var(--muted); font-size:13px; margin:0 0 20px; line-height:1.5;}
+
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:22px; margin-bottom:18px; box-shadow:0 1px 2px rgba(20,25,40,.04);
+  }
+  .card-title{font-size:14px; font-weight:600; margin:0 0 14px; color:var(--text);}
+
+  label{display:block; font-size:12.5px; font-weight:600; color:var(--muted); margin:16px 0 6px; text-transform:uppercase; letter-spacing:.3px;}
+  label:first-of-type{margin-top:0;}
+  label.plain{text-transform:none; font-weight:500; font-size:13.5px; color:var(--text);}
+
+  input, select, textarea{
+    width:100%; background:#fbfcfe; border:1px solid var(--border); color:var(--text);
+    border-radius:9px; padding:11px 12px; font-size:14.5px; outline:none; font-family:inherit;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  input:focus, select:focus, textarea:focus{
+    border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); background:#fff;
+  }
+  textarea{resize:vertical; min-height:74px; font-family:inherit;}
+  .row{display:flex; gap:12px;}
+  .row > div{flex:1;}
+
+  button{
+    width:100%; background:var(--accent); color:#fff; border:none; border-radius:9px;
+    padding:13px; font-size:14.5px; font-weight:600; cursor:pointer; margin-top:20px;
+    transition:background .15s;
+  }
+  button:hover{background:var(--accent-h);}
+  button:disabled{opacity:.5; cursor:not-allowed;}
+
+  .msg{
+    border-radius:9px; padding:11px 13px; font-size:13.5px; margin-top:14px; display:none; line-height:1.4;
+  }
+  .msg.ok{display:block; background:var(--ok-bg); color:var(--ok); border:1px solid #c7ead9;}
+  .msg.err{display:block; background:var(--err-bg); color:var(--err); border:1px solid #f3c7cb;}
+  .hint{font-size:12px; color:var(--muted); margin-top:6px; line-height:1.4;}
+
+  .lock{display:flex; flex-direction:column; gap:4px;}
+  #form{display:none;}
+
+  .badge-pills{display:flex; gap:8px; margin-top:6px;}
+  .pill{
+    flex:1; text-align:center; padding:9px; border:1px solid var(--border); border-radius:8px;
+    cursor:pointer; font-size:13px; color:var(--muted); font-weight:500; background:#fbfcfe;
+    transition:all .15s;
+  }
+  .pill.active{border-color:var(--accent); color:var(--accent); background:var(--accent-soft); font-weight:600;}
+
+  .tabBtn{
+    flex:1; background:var(--card); border:1px solid var(--border); color:var(--muted);
+    border-radius:9px; padding:11px; font-size:13.5px; font-weight:600; cursor:pointer; margin-top:0;
+  }
+  .tabBtn.active{border-color:var(--accent); color:var(--accent); background:var(--accent-soft);}
+
+  .prodRow{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:12px 0; border-bottom:1px solid var(--border); font-size:14px;
+  }
+  .prodRow:last-child{border-bottom:none;}
+  .prodRow .meta{color:var(--muted); font-size:12px; margin-top:2px;}
+  .delBtn{
+    width:auto; background:var(--err); padding:7px 14px; font-size:13px; margin-top:0; flex-shrink:0;
+  }
+  .delBtn:hover{background:#a8262f;}
+
+  .spinner{
+    display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px; margin-right:6px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="logo">A</div>
+    <div>
+      <h1>Product Manager</h1>
+      <p class="sub">Admin dashboard</p>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <p class="lead">Paste Google Drive links, fill the details, hit save. Your site will rebuild automatically in about a minute.</p>
+
+  <div class="card lock" id="lockCard">
+    <div class="card-title">Sign in</div>
+    <label>Admin password</label>
+    <input type="password" id="password" placeholder="Enter password">
+    <button id="unlockBtn">Unlock</button>
+    <div class="msg err" id="lockMsg"></div>
+  </div>
+
+  <div id="tabs" style="display:none; gap:10px; margin-bottom:16px;" class="row">
+    <button type="button" id="tabAdd" class="tabBtn">Add product</button>
+    <button type="button" id="tabDelete" class="tabBtn">Delete product</button>
+  </div>
+
+  <div class="card" id="deletePanel" style="display:none">
+    <div class="card-title">Delete a product</div>
+    <label>Category</label>
+    <select id="delCategory">
+      <option value="drop-shoulder">Drop-Shoulder Tee</option>
+      <option value="tshirt">T-Shirt</option>
+      <option value="shirt">Shirt</option>
+      <option value="pants">Pants</option>
+      <option value="watch">Watch</option>
+    </select>
+    <button type="button" id="loadProductsBtn">Load products</button>
+    <div id="productList" style="margin-top:16px;"></div>
+    <div class="msg ok" id="delOkMsg"></div>
+    <div class="msg err" id="delErrMsg"></div>
+  </div>
+
+  <form class="card" id="form">
+    <div class="card-title">Add a new product</div>
+    <label>Category</label>
+    <select id="category">
+      <option value="drop-shoulder">Drop-Shoulder Tee</option>
+      <option value="tshirt">T-Shirt</option>
+      <option value="shirt">Shirt</option>
+      <option value="pants">Pants</option>
+      <option value="watch">Watch</option>
+    </select>
+
+    <div id="subcatWrap" style="display:none">
+      <label>Subcategory</label>
+      <select id="subcategory"></select>
+    </div>
+
+    <label>Product name</label>
+    <input type="text" id="name" placeholder="e.g. Essential Drop-Shoulder">
+
+    <label>Fabric / material</label>
+    <input type="text" id="fabric" placeholder="e.g. Heavy Cotton 240GSM">
+
+    <div class="row">
+      <div>
+        <label>Price (₹)</label>
+        <input type="number" id="price" placeholder="490">
+      </div>
+      <div>
+        <label>Old price (optional)</label>
+        <input type="number" id="old" placeholder="600">
+      </div>
+    </div>
+
+    <label>Badge</label>
+    <div class="badge-pills">
+      <div class="pill" data-val="">None</div>
+      <div class="pill" data-val="new">New</div>
+      <div class="pill" data-val="sale">Sale</div>
+    </div>
+    <input type="hidden" id="badge" value="">
+
+    <label>Stars (1–5)</label>
+    <input type="number" id="stars" min="1" max="5" value="5">
+
+    <label>Google Drive links (one per line — share-link or file ID)</label>
+    <textarea id="photos" placeholder="https://drive.google.com/file/d/XXXXXXXX/view
+https://drive.google.com/file/d/YYYYYYYY/view"></textarea>
+    <div class="hint">Make sure each file is shared as "Anyone with the link can view".</div>
+
+    <label>Description</label>
+    <textarea id="desc" placeholder="Short product description shown on the site"></textarea>
+
+    <label class="plain" style="margin-top:18px;"><input type="checkbox" id="noColour" style="width:auto;display:inline;margin-right:6px;">No colour picker for this product</label>
+
+    <button id="saveBtn" type="submit">Save product</button>
+    <div class="msg ok" id="okMsg"></div>
+    <div class="msg err" id="errMsg"></div>
+  </form>
+</div>
+
+<script>
+  let PASSWORD = '';
+
+  // Mirrors SUBCATEGORIES in products.js — keep in sync if you add/rename
+  // subcategories there.
+  const SUBCATEGORIES = {
+    pants: [
+      { id: 'baggy-pants',  label: 'Baggy Pants' },
+      { id: 'formal-pants', label: 'Formal Pants' },
+      { id: 'cargo-pants',  label: 'Cargo Pants' },
+    ],
+    shirt: [
+      { id: 'polo-shirt',    label: 'Polo Shirt' },
+      { id: 'short-sleeved', label: 'Short Sleeved' },
+      { id: 'long-sleeved',  label: 'Long Sleeved' },
+    ],
+    watch: [
+      { id: 'smartwatch',   label: 'Smartwatch' },
+      { id: 'analog-watch', label: 'Analog Watch' },
+    ],
+  };
+
+  function refreshSubcategoryField() {
+    const category = document.getElementById('category').value;
+    const wrap = document.getElementById('subcatWrap');
+    const sel = document.getElementById('subcategory');
+    const list = SUBCATEGORIES[category];
+    if (list && list.length) {
+      sel.innerHTML = list.map(sc => `<option value="${sc.id}">${sc.label}</option>`).join('');
+      wrap.style.display = 'block';
+    } else {
+      sel.innerHTML = '';
+      wrap.style.display = 'none';
+    }
+  }
+
+  const unlockBtn = document.getElementById('unlockBtn');
+  const lockMsg = document.getElementById('lockMsg');
+
+  unlockBtn.onclick = async () => {
+    const pw = document.getElementById('password').value;
+    lockMsg.style.display = 'none';
+    if (!pw) {
+      lockMsg.textContent = 'Enter a password.';
+      lockMsg.style.display = 'block';
+      return;
+    }
+    unlockBtn.disabled = true;
+    unlockBtn.innerHTML = '<span class="spinner"></span>Checking…';
+    try {
+      // Reuses the existing list-products function purely to check the
+      // password against ADMIN_PASSWORD — no extra function needed.
+      const res = await fetch('/.netlify/functions/list-products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw, category: 'pants' }),
+      });
+      const data = await res.json();
+      if (res.status === 401) {
+        lockMsg.textContent = data.error || 'Wrong password.';
+        lockMsg.style.display = 'block';
+        return;
+      }
+      PASSWORD = pw;
+      document.getElementById('lockCard').style.display = 'none';
+      document.getElementById('tabs').style.display = 'flex';
+      document.getElementById('form').style.display = 'block';
+      document.getElementById('tabAdd').classList.add('active');
+      refreshSubcategoryField();
+    } catch (err) {
+      lockMsg.textContent = 'Could not reach the server. Try again.';
+      lockMsg.style.display = 'block';
+    } finally {
+      unlockBtn.disabled = false;
+      unlockBtn.textContent = 'Unlock';
+    }
+  };
+
+  document.getElementById('password').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); unlockBtn.click(); }
+  });
+
+  document.getElementById('tabAdd').onclick = () => {
+    document.getElementById('tabAdd').classList.add('active');
+    document.getElementById('tabDelete').classList.remove('active');
+    document.getElementById('form').style.display = 'block';
+    document.getElementById('deletePanel').style.display = 'none';
+  };
+  document.getElementById('tabDelete').onclick = () => {
+    document.getElementById('tabDelete').classList.add('active');
+    document.getElementById('tabAdd').classList.remove('active');
+    document.getElementById('form').style.display = 'none';
+    document.getElementById('deletePanel').style.display = 'block';
+  };
+
+  document.getElementById('loadProductsBtn').onclick = async () => {
+    const category = document.getElementById('delCategory').value;
+    const listEl = document.getElementById('productList');
+    const delErrMsg = document.getElementById('delErrMsg');
+    const delOkMsg = document.getElementById('delOkMsg');
+    delErrMsg.style.display = 'none';
+    delOkMsg.style.display = 'none';
+    listEl.textContent = 'Loading…';
+    try {
+      const res = await fetch('/.netlify/functions/list-products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: PASSWORD, category }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to load');
+      if (data.products.length === 0) {
+        listEl.textContent = 'No products in this category.';
+        return;
+      }
+      listEl.innerHTML = '';
+      data.products.forEach((p) => {
+        const row = document.createElement('div');
+        row.className = 'prodRow';
+        row.innerHTML = `
+          <div>
+            <div>${p.name || '(unnamed)'}</div>
+            <div class="meta">${p.code || ''} · id ${p.id}</div>
+          </div>
+          <button type="button" class="delBtn" data-id="${p.id}">Delete</button>
+        `;
+        listEl.appendChild(row);
+      });
+      listEl.querySelectorAll('.delBtn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Delete this product? This cannot be undone.')) return;
+          btn.disabled = true;
+          btn.textContent = '…';
+          try {
+            const res = await fetch('/.netlify/functions/delete-product', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ password: PASSWORD, category, id: btn.dataset.id }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to delete');
+            delOkMsg.textContent = data.message;
+            delOkMsg.style.display = 'block';
+            btn.closest('.prodRow').remove();
+          } catch (err) {
+            delErrMsg.textContent = err.message;
+            delErrMsg.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Delete';
+          }
+        });
+      });
+    } catch (err) {
+      listEl.textContent = '';
+      delErrMsg.textContent = err.message;
+      delErrMsg.style.display = 'block';
+    }
+  };
+
+  document.getElementById('category').addEventListener('change', refreshSubcategoryField);
+
+  document.querySelectorAll('.pill').forEach((p) => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('.pill').forEach((x) => x.classList.remove('active'));
+      p.classList.add('active');
+      document.getElementById('badge').value = p.dataset.val;
+    });
+  });
+  document.querySelector('.pill[data-val=""]').classList.add('active');
+
+  document.getElementById('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const saveBtn = document.getElementById('saveBtn');
+    const okMsg = document.getElementById('okMsg');
+    const errMsg = document.getElementById('errMsg');
+    okMsg.style.display = 'none';
+    errMsg.style.display = 'none';
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spinner"></span>Saving…';
+
+    const category = document.getElementById('category').value;
+    const hasSubcat = !!SUBCATEGORIES[category];
+    const payload = {
+      password: PASSWORD,
+      category,
+      subcategory: hasSubcat ? document.getElementById('subcategory').value : undefined,
+      name: document.getElementById('name').value.trim(),
+      fabric: document.getElementById('fabric').value.trim(),
+      price: document.getElementById('price').value,
+      old: document.getElementById('old').value,
+      badge: document.getElementById('badge').value || null,
+      stars: document.getElementById('stars').value,
+      driveLinks: document.getElementById('photos').value.split('\n').map(s => s.trim()).filter(Boolean),
+      desc: document.getElementById('desc').value.trim(),
+      noColour: document.getElementById('noColour').checked,
+    };
+
+    try {
+      const res = await fetch('/.netlify/functions/add-product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Something went wrong');
+      okMsg.textContent = data.message;
+      okMsg.style.display = 'block';
+      document.getElementById('form').reset();
+      document.querySelector('.pill[data-val=""]').click();
+      refreshSubcategoryField();
+    } catch (err) {
+      errMsg.textContent = err.message;
+      errMsg.style.display = 'block';
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save product';
+    }
+  });
+</script>
+</body>
+</html>
