@@ -165,23 +165,4 @@ const TSHIRTS_PRODUCTS = [
     noColour: true,
     desc: 'Everyday essential polo neck t-shirt. Soft, breathable 180GSM cotton. Available in 10+ colours. Regular fit.'
   },
-
-  // ── Add new t-shirts below this line ──
-
-  {
-    id: 3010,
-    code: 'TS-010',
-    name: 'ueute',
-    fabric: 'heheh',
-    price: 4665, old: 4646656,
-    section: 'tshirt',
-    badge: 'new', stars: 5,
-    icon: 'fa-shirt', label: '',
-    photos: [
-      '1pA67M15CZj6zfrwU1i4TbfrmnGsj6pwg',
-    ],
-    noColour: true,
-    desc: 'good product'
-  },
-
 ];
