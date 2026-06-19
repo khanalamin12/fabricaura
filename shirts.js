@@ -437,4 +437,21 @@ const SHIRTS_PRODUCTS = [
 
   // ── Add new shirts below this line ──
 
+  {
+    id: 4026,
+    code: 'SH-026',
+    name: 'yyy',
+    fabric: '66',
+    price: 500, old: 800,
+    section: 'shirt',
+    subcategory: 'long-sleeved',
+    badge: 'sale', stars: 5,
+    icon: 'fa-shirt', label: '',
+    photos: [
+      '1pA67M15CZj6zfrwU1i4TbfrmnGsj6pwg',
+    ],
+    noColour: true,
+    desc: 'is uw'
+  },
+
 ];
