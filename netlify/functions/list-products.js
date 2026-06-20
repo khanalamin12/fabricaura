@@ -57,14 +57,14 @@ exports.handler = async (event) => {
 
       // Extract photos array — grab all quoted strings inside photos: [ ... ]
       const photosMatch = chunk.match(/photos:\s*\[([\s\S]*?)\]/);
+      let photoIds = [];
       let driveLinks = [];
       if (photosMatch) {
-        driveLinks = Array.from(photosMatch[1].matchAll(/'([^']+)'/g)).map(m =>
-          `https://drive.google.com/file/d/${m[1]}/view`
-        );
+        photoIds = Array.from(photosMatch[1].matchAll(/'([^']+)'/g)).map(m => m[1]);
+        driveLinks = photoIds.map(id => `https://drive.google.com/file/d/${id}/view`);
       }
 
-      return { id, code, name, fabric, price, old, badge, stars, desc, subcategory, noColour, driveLinks };
+      return { id, code, name, fabric, price, old, badge, stars, desc, subcategory, noColour, photoIds, driveLinks };
     }).filter(p => p.id);
 
     return { statusCode: 200, headers, body: JSON.stringify({ products }) };
@@ -72,4 +72,5 @@ exports.handler = async (event) => {
     return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
 };
-  
+
+    
