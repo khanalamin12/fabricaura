@@ -46,47 +46,8 @@ const WATCHES_PRODUCTS = [
     desc: 'Sleek analog watch with stainless steel case and genuine leather strap. Japanese quartz movement. Water resistant 30m.'
   },
 
-  {
-    id: 5002,
-    code: 'WA-002',
-    name: 'Minimalist Mesh Watch',
-    fabric: 'Steel Mesh Strap',
-    price: 1299, old: null,
-    section: 'watch',
-    subcategory: 'analog-watch',
-    badge: 'new', stars: 5,
-    icon: 'fa-clock', label: 'Analog Watch',
-    photos: [
-      // '1YourFileIDHere',
-    ],
-    colors: [
-      { name: 'Silver/White', hex: '#C0C0C0' },
-      { name: 'Black/Black', hex: '#1A1A1A' },
-      { name: 'Gold/White', hex: '#C9A84C' },
-    ],
-    desc: 'Ultra-thin minimalist watch with stainless steel mesh band. Clean white or black dial. Perfect for office and casual wear.'
-  },
-
-  {
-    id: 5003,
-    code: 'WA-003',
-    name: 'Sport Chronograph Watch',
-    fabric: 'Rubber Strap',
-    price: 1799, old: 2299,
-    section: 'watch',
-    subcategory: 'analog-watch',
-    badge: 'sale', stars: 4,
-    icon: 'fa-clock', label: 'Analog Watch',
-    photos: [
-      // '1YourFileIDHere',
-    ],
-    colors: [
-      { name: 'Black', hex: '#1A1A1A' },
-      { name: 'Red', hex: '#C0152A' },
-      { name: 'Blue', hex: '#1B2A4A' },
-    ],
-    desc: 'Bold sport chronograph with luminous hands. Durable rubber strap, scratch-resistant mineral glass. Water resistant 50m.'
-  },
+  
+  
 
   // ── Add new watches below this line ──
 
