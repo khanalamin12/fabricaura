@@ -131,4 +131,5 @@ const PRODUCTS = [
   ...SHIRTS_PRODUCTS,
   ...TSHIRTS_PRODUCTS,
   ...WATCHES_PRODUCTS,
-];
+].filter(p => !p.disabled && !p.deletedAt);
+    
