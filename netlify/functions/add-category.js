@@ -2,10 +2,7 @@
 // Creates a brand-new top-level product category:
 //   1. Creates a new data file (e.g. jackets.js) with an empty products array.
 //   2. Appends an entry for it into CATEGORY_MAP inside _shared.js.
-//
-// NOTE: this does NOT add the category to the storefront's nav/menu —
-// that's a manual step in index.html / app.js, by design (kept separate
-// so this function can't accidentally break the live storefront layout).
+//   3. Also supports deleting a category (action:'delete').
 
 function slugify(s) {
   return String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -22,19 +19,9 @@ exports.handler = async (event) => {
       return { statusCode: 401, headers, body: JSON.stringify({ error: 'Wrong password' }) };
     }
 
-    const label = (body.label || '').trim();
-    if (!label) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing category label' }) };
-
-    const categoryKey = slugify(body.categoryKey || label);
-    if (!categoryKey) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Could not derive a valid category key' }) };
-
-    const codePrefix = (body.codePrefix || categoryKey.slice(0, 2)).toUpperCase().slice(0, 3);
-    const fileName = `${categoryKey}.js`;
-    const arrayVar = `${categoryKey.replace(/-/g, '_').toUpperCase()}_PRODUCTS`;
-
-    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-    const GITHUB_OWNER = process.env.GITHUB_OWNER;
-    const GITHUB_REPO = process.env.GITHUB_REPO;
+    const GITHUB_TOKEN  = process.env.GITHUB_TOKEN;
+    const GITHUB_OWNER  = process.env.GITHUB_OWNER;
+    const GITHUB_REPO   = process.env.GITHUB_REPO;
     const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
     if (!GITHUB_TOKEN || !GITHUB_OWNER || !GITHUB_REPO) {
       return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server is missing GitHub env vars' }) };
@@ -44,47 +31,106 @@ exports.handler = async (event) => {
       'User-Agent': 'admin-dashboard',
       Accept: 'application/vnd.github+json',
     };
-    const dir = process.env.PRODUCTS_PATH ? `${process.env.PRODUCTS_PATH}/` : '';
 
-    // ── Step 1: read _shared.js ──
-    const sharedPath = `${dir}_shared.js`;
-    const sharedApiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${sharedPath}`;
-    const sharedRes = await fetch(`${sharedApiBase}?ref=${GITHUB_BRANCH}`, { headers: ghHeaders });
-    if (!sharedRes.ok) return { statusCode: 500, headers, body: JSON.stringify({ error: `Could not read _shared.js: ${await sharedRes.text()}` }) };
-    const sharedData = await sharedRes.json();
-    const sharedSha = sharedData.sha;
+    // Product files may be in a subfolder; _shared.js is always in netlify/functions/
+    const productDir  = process.env.PRODUCTS_PATH ? `${process.env.PRODUCTS_PATH}/` : '';
+    const sharedPath  = 'netlify/functions/_shared.js';
+    const sharedApiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${sharedPath}`;
+
+    // ── READ _shared.js ──
+    const sharedRes = await fetch(`${sharedApiUrl}?ref=${GITHUB_BRANCH}`, { headers: ghHeaders });
+    if (!sharedRes.ok) {
+      return { statusCode: 500, headers, body: JSON.stringify({ error: `Could not read _shared.js: ${await sharedRes.text()}` }) };
+    }
+    const sharedData    = await sharedRes.json();
+    const sharedSha     = sharedData.sha;
     const sharedContent = Buffer.from(sharedData.content, 'base64').toString('utf-8');
+
+    // ── DELETE CATEGORY ──
+    if (body.action === 'delete') {
+      const categoryKey = (body.categoryKey || '').trim();
+      if (!categoryKey) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing categoryKey' }) };
+
+      // Remove entry from CATEGORY_MAP — find and remove the line that starts with the key
+      const lineRe = new RegExp(`\\n\\s*'${categoryKey}'\\s*:\\s*\\{[^}]*\\},?`, 'g');
+      if (!lineRe.test(sharedContent)) {
+        return { statusCode: 404, headers, body: JSON.stringify({ error: `Category '${categoryKey}' not found in _shared.js` }) };
+      }
+      const updatedShared = sharedContent.replace(
+        new RegExp(`\\n\\s*'${categoryKey}'\\s*:\\s*\\{[^}]*\\},?`, 'g'), ''
+      );
+
+      // Commit updated _shared.js
+      const putRes = await fetch(sharedApiUrl, {
+        method: 'PUT', headers: ghHeaders,
+        body: JSON.stringify({
+          message: `Remove category '${categoryKey}' from CATEGORY_MAP via admin dashboard`,
+          content: Buffer.from(updatedShared, 'utf-8').toString('base64'),
+          sha: sharedSha, branch: GITHUB_BRANCH,
+        }),
+      });
+      if (!putRes.ok) return { statusCode: 500, headers, body: JSON.stringify({ error: `Failed to update _shared.js: ${await putRes.text()}` }) };
+
+      // Try to delete the data file too (best effort — don't fail if it's already gone)
+      try {
+        // Find the file name from the old content
+        const fileMatch = sharedContent.match(new RegExp(`'${categoryKey}'\\s*:\\s*\\{[^}]*file:\\s*'([^']+)'`));
+        if (fileMatch) {
+          const filePath = `${productDir}${fileMatch[1]}`;
+          const fileApiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
+          const fileRes = await fetch(`${fileApiUrl}?ref=${GITHUB_BRANCH}`, { headers: ghHeaders });
+          if (fileRes.ok) {
+            const fileData = await fileRes.json();
+            await fetch(fileApiUrl, {
+              method: 'DELETE', headers: ghHeaders,
+              body: JSON.stringify({
+                message: `Delete category file ${fileMatch[1]} via admin dashboard`,
+                sha: fileData.sha, branch: GITHUB_BRANCH,
+              }),
+            });
+          }
+        }
+      } catch(e) { /* best effort */ }
+
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: `Category '${categoryKey}' deleted. Redeploy to take effect.` }) };
+    }
+
+    // ── ADD CATEGORY ──
+    const label = (body.label || '').trim();
+    if (!label) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing category label' }) };
+
+    const categoryKey = slugify(body.categoryKey || label);
+    if (!categoryKey) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Could not derive a valid category key' }) };
+
+    const codePrefix = (body.codePrefix || categoryKey.slice(0, 2)).toUpperCase().slice(0, 3);
+    const fileName   = `${categoryKey}.js`;
+    const arrayVar   = `${categoryKey.replace(/-/g, '_').toUpperCase()}_PRODUCTS`;
 
     if (sharedContent.includes(`'${categoryKey}':`)) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: `Category '${categoryKey}' already exists` }) };
     }
 
-    // Compute a free id range: find the highest `max:` used so far, start the new one 10000 above it (gives huge headroom, never collides)
-    const maxValues = Array.from(sharedContent.matchAll(/max:\s*(\d+)/g)).map(m => parseInt(m[1], 10));
+    // Compute free ID range
+    const maxValues  = Array.from(sharedContent.matchAll(/max:\s*(\d+)/g)).map(m => parseInt(m[1], 10));
     const highestMax = maxValues.length ? Math.max(...maxValues) : 1000;
-    const newMin = Math.ceil((highestMax + 1000) / 1000) * 1000 + 1;
-    const newMax = newMin + 998;
+    const newMin     = Math.ceil((highestMax + 1000) / 1000) * 1000 + 1;
+    const newMax     = newMin + 998;
 
     const mapStartRe = /const\s+CATEGORY_MAP\s*=\s*\{/;
-    const mapStart = sharedContent.match(mapStartRe);
-    if (!mapStart) return { statusCode: 500, headers, body: JSON.stringify({ error: 'Could not find CATEGORY_MAP' }) };
-    const insertAt = mapStart.index + mapStart[0].length;
-    const newEntry = `\n  '${categoryKey}': { file: '${fileName}', arrayVar: '${arrayVar}', min: ${newMin}, max: ${newMax}, codePrefix: '${codePrefix}' },`;
-    const updatedSharedContent = sharedContent.slice(0, insertAt) + newEntry + sharedContent.slice(insertAt);
+    const mapStart   = sharedContent.match(mapStartRe);
+    if (!mapStart) return { statusCode: 500, headers, body: JSON.stringify({ error: 'Could not find CATEGORY_MAP in _shared.js' }) };
+    const insertAt   = mapStart.index + mapStart[0].length;
+    const newEntry   = `\n  '${categoryKey}': { file: '${fileName}', arrayVar: '${arrayVar}', min: ${newMin}, max: ${newMax}, codePrefix: '${codePrefix}', label: '${label}' },`;
+    const updatedShared = sharedContent.slice(0, insertAt) + newEntry + sharedContent.slice(insertAt);
 
-    // ── Step 2: create the new data file ──
-    const newFileApiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${dir}${fileName}`;
+    // Create new data file
+    const newFileApiUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${productDir}${fileName}`;
+    const existsRes = await fetch(`${newFileApiUrl}?ref=${GITHUB_BRANCH}`, { headers: ghHeaders });
+    if (existsRes.ok) return { statusCode: 400, headers, body: JSON.stringify({ error: `File ${fileName} already exists in the repo` }) };
+
     const newFileContent = `// ── ${label.toUpperCase()} (${newMin}–${newMax}) ─────────────────────────────────\nconst ${arrayVar} = [\n];\n`;
-
-    // Check the file doesn't already exist (avoid clobbering)
-    const existsRes = await fetch(`${newFileApiBase}?ref=${GITHUB_BRANCH}`, { headers: ghHeaders });
-    if (existsRes.ok) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: `File ${fileName} already exists in the repo` }) };
-    }
-
-    const createRes = await fetch(newFileApiBase, {
-      method: 'PUT',
-      headers: ghHeaders,
+    const createRes = await fetch(newFileApiUrl, {
+      method: 'PUT', headers: ghHeaders,
       body: JSON.stringify({
         message: `Create category file ${fileName} via admin dashboard`,
         content: Buffer.from(newFileContent, 'utf-8').toString('base64'),
@@ -93,31 +139,23 @@ exports.handler = async (event) => {
     });
     if (!createRes.ok) return { statusCode: 500, headers, body: JSON.stringify({ error: `Could not create ${fileName}: ${await createRes.text()}` }) };
 
-    // ── Step 3: commit updated _shared.js ──
-    const putSharedRes = await fetch(sharedApiBase, {
-      method: 'PUT',
-      headers: ghHeaders,
+    // Commit updated _shared.js
+    const putSharedRes = await fetch(sharedApiUrl, {
+      method: 'PUT', headers: ghHeaders,
       body: JSON.stringify({
         message: `Register category '${categoryKey}' in CATEGORY_MAP via admin dashboard`,
-        content: Buffer.from(updatedSharedContent, 'utf-8').toString('base64'),
-        sha: sharedSha,
-        branch: GITHUB_BRANCH,
+        content: Buffer.from(updatedShared, 'utf-8').toString('base64'),
+        sha: sharedSha, branch: GITHUB_BRANCH,
       }),
     });
-    if (!putSharedRes.ok) {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: `Created ${fileName} but failed to register it in _shared.js: ${await putSharedRes.text()}. You may need to add it manually.` }) };
-    }
+    if (!putSharedRes.ok) return { statusCode: 500, headers, body: JSON.stringify({ error: `Created ${fileName} but failed to register in _shared.js: ${await putSharedRes.text()}` }) };
 
     return {
-      statusCode: 200,
-      headers,
+      statusCode: 200, headers,
       body: JSON.stringify({
-        success: true,
-        categoryKey,
-        fileName,
-        arrayVar,
+        success: true, categoryKey, fileName, arrayVar,
         idRange: `${newMin}-${newMax}`,
-        message: `Category '${label}' created (key: ${categoryKey}). You can now add products to it from the Add tab. Remember to add a nav entry for it on the storefront.`,
+        message: `Category '${label}' created! Remember to add a nav entry for it in your storefront.`,
       }),
     };
   } catch (err) {
