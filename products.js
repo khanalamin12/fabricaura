@@ -18,6 +18,8 @@ const SUBCATEGORIES = {
   watch: [
     { id: 'smartwatch',   label: 'Smartwatch',   icon: 'fa-mobile-screen' },
     { id: 'analog-watch', label: 'Analog Watch', icon: 'fa-clock'         },
+    { id: 'wall-clock', label: 'wall clock', icon: 'fa-shirt' },
+  
 
 
   ],
