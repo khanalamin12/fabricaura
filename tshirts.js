@@ -87,6 +87,7 @@ const TSHIRTS_PRODUCTS = [
   },
 
   {
+    deletedAt: '2026-06-20T14:01:40.863Z',
     id: 3005,
     code: 'TS-005',
     name: 'Polo T-shirt',
