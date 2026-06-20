@@ -155,6 +155,7 @@ let activeCategory = 'all';
 let activeSubcategory = 'all'; // sub-filter inside the "Pants" category
 
 const CAT_META = {
+  'jacket': { eyebrow: 'Jacket', title: 'Jacket' },
   'all':          { eyebrow: 'Full Collection',    title: 'All Items' },
   'drop-shoulder':{ eyebrow: 'Oversized Fits',     title: 'Drop Shoulders' },
   'pants':        { eyebrow: 'Baggy, Formal & Cargo', title: 'Pants' },
