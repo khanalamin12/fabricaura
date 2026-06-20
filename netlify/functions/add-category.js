@@ -1,8 +1,4 @@
-// Netlify Function: add-category
-// Creates a brand-new top-level product category:
-//   1. Creates a new data file (e.g. jackets.js) with an empty products array.
-//   2. Appends an entry for it into CATEGORY_MAP inside _shared.js.
-//   3. Also supports deleting a category (action:'delete').
+
 
 function slugify(s) {
   return String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
