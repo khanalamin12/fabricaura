@@ -51,4 +51,21 @@ const WATCHES_PRODUCTS = [
 
   // ── Add new watches below this line ──
 
+  {
+    id: 5002,
+    code: 'WT-001',
+    name: 'premium watch',
+    fabric: 'steel.',
+    price: 1600, old: 2000,
+    section: 'watch',
+    subcategory: 'smartwatch',
+    badge: 'new', stars: 5,
+    icon: 'fa-shirt', label: '',
+    photos: [
+      '1pA67M15CZj6zfrwU1i4TbfrmnGsj6pwg',
+    ],
+    noColour: true,
+    desc: 'this is a premium watch'
+  },
+
 ];
