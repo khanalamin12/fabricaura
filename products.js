@@ -92,6 +92,22 @@ const DROP_SHOULDER_PRODUCTS = [
 
   // ── Add new drop-shoulder products below this line ──
 
+  {
+    id: 1004,
+    code: 'DS-004',
+    name: 'essential drop shoulder',
+    fabric: 'kora',
+    price: 500, old: 600,
+    section: 'drop-shoulder',
+    badge: 'new', stars: 5,
+    icon: 'fa-shirt', label: '',
+    photos: [
+      '1EaECefsVkLuwH7P5eoO_ybhVPTuqCKwt',
+    ],
+    noColour: true,
+    desc: 'good product.'
+  },
+
 ];
 
 
