@@ -44,27 +44,32 @@ exports.handler = async (event) => {
     const objRe = /\s*\{[^{}]*\}\s*,?/gs;
     const chunks = arrayBody.match(objRe) || [];
     let found = false;
-    const keptChunks = chunks.filter((chunk) => {
+    const nowIso = new Date().toISOString();
+
+    const updatedChunks = chunks.map((chunk) => {
       const idMatch = chunk.match(/id:\s*(\d+)/);
-      if (idMatch && idMatch[1] === targetId) {
-        found = true;
-        return false;
-      }
-      return true;
+      if (!idMatch || idMatch[1] !== targetId) return chunk;
+      found = true;
+
+      // Soft delete: tag with deletedAt instead of removing, so it can be
+      // restored from the admin Trash panel within the recovery window.
+      let newChunk = chunk.replace(/\n\s*deletedAt:\s*'[^']*',?/, ''); // strip any stale tag
+      newChunk = newChunk.replace(/\{\s*\n/, (m) => m + `    deletedAt: '${nowIso}',\n`);
+      return newChunk;
     });
 
     if (!found) {
       return { statusCode: 404, headers, body: JSON.stringify({ error: `Product id ${targetId} not found in ${cfg.file}` }) };
     }
 
-    const newArrayBody = keptChunks.join('');
+    const newArrayBody = updatedChunks.join('');
     const updatedContent = content.slice(0, arrayStartIdx) + newArrayBody + content.slice(closeIdx);
 
     const putRes = await fetch(apiBase, {
       method: 'PUT',
       headers: ghHeaders,
       body: JSON.stringify({
-        message: `Delete product id ${targetId} via admin dashboard`,
+        message: `Move product id ${targetId} to trash via admin dashboard`,
         content: Buffer.from(updatedContent, 'utf-8').toString('base64'),
         sha,
         branch: GITHUB_BRANCH,
@@ -76,8 +81,9 @@ exports.handler = async (event) => {
       return { statusCode: 500, headers, body: JSON.stringify({ error: `GitHub commit failed: ${t}` }) };
     }
 
-    return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: `Deleted product ${targetId}. Site will redeploy in ~1 min.` }) };
+    return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: `Moved product ${targetId} to Trash. Recoverable for 7 days. Site will redeploy in ~1 min.` }) };
   } catch (err) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
 };
+        
