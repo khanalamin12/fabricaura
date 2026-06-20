@@ -23,6 +23,7 @@
 
 const TSHIRTS_PRODUCTS = [
   {
+    disabled: true,
     id: 3001,
     code: 'TS-001',
     name: 'Polo T-shirt',
