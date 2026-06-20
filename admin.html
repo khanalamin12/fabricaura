@@ -157,6 +157,23 @@ body::before{
 }
 .btn-edit:hover{background:var(--ag);}
 
+.btn-toggle{
+  width:auto; background:var(--bg2,#f0f0f0);
+  border:1px solid var(--border); color:var(--text);
+  border-radius:8px; padding:7px 12px;
+  font-size:12px; font-weight:700; font-family:inherit;
+  cursor:pointer; flex-shrink:0; transition:background .15s;
+}
+.btn-toggle:hover{background:var(--border);}
+.btn-toggle:disabled{opacity:.4; cursor:not-allowed;}
+
+.prod-disabled-badge{
+  display:inline-block; font-size:10px; font-weight:700;
+  background:var(--err-bg); color:var(--err); border:1px solid var(--err-b);
+  border-radius:5px; padding:1px 6px; margin-left:4px; vertical-align:middle;
+  text-transform:uppercase; letter-spacing:.04em;
+}
+
 /* ── MSG ── */
 .msg{border-radius:10px; padding:11px 14px; font-size:13px; margin-top:12px; display:none; line-height:1.5; font-weight:500;}
 .msg.ok{display:block; background:var(--ok-bg); color:var(--ok); border:1px solid var(--ok-b);}
@@ -404,6 +421,8 @@ body::before{
       <button class="tab active" id="tabAdd"><span class="ti">＋</span>Add</button>
       <button class="tab" id="tabEdit"><span class="ti">✎</span>Edit</button>
       <button class="tab" id="tabDelete"><span class="ti">✕</span>Delete</button>
+      <button class="tab" id="tabCategories"><span class="ti">▤</span>Categories</button>
+      <button class="tab" id="tabTrash"><span class="ti">🗑</span>Trash</button>
       <button class="tab" id="tabSettings"><span class="ti">⚙</span>Settings</button>
     </div>
 
@@ -490,8 +509,9 @@ body::before{
         <div class="msg ok" id="okMsg"></div>
         <div class="msg err" id="errMsg"></div>
       </div>
-    </div>
+                        </div>
 
+    
     <!-- ── EDIT PANEL ── -->
     <div id="editPanel" style="display:none">
       <div class="card">
@@ -543,6 +563,96 @@ body::before{
       </div>
     </div>
 
+    <!-- ── CATEGORIES PANEL ── -->
+    <div id="categoriesPanel" style="display:none">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">▤</div>
+          <div><div class="card-title-text">Add a Subcategory</div>
+          <div class="card-title-sub">Add a new style under an existing category</div></div>
+        </div>
+        <div class="fwrap">
+          <label>Parent Category</label>
+          <select id="subcatParentCategory">
+            <option value="drop-shoulder">Drop-Shoulder Tee</option>
+            <option value="tshirt">T-Shirt</option>
+            <option value="shirt">Shirt</option>
+            <option value="pants">Pants</option>
+            <option value="watch">Watch</option>
+          </select>
+        </div>
+        <div class="fwrap"><label>Subcategory Name</label>
+          <input type="text" id="newSubcatLabel" placeholder="e.g. Track Pants">
+        </div>
+        <div class="fwrap"><label>Icon class (optional, Font Awesome)</label>
+          <input type="text" id="newSubcatIcon" placeholder="fa-shirt">
+        </div>
+        <button class="btn-primary" id="addSubcatBtn">+ Add Subcategory</button>
+        <div class="msg ok" id="subcatOkMsg"></div>
+        <div class="msg err" id="subcatErrMsg"></div>
+
+        <div class="section-label" style="margin-top:24px;">Existing Subcategories</div>
+        <div class="fwrap">
+          <label>View subcategories for</label>
+          <select id="subcatViewCategory">
+            <option value="drop-shoulder">Drop-Shoulder Tee</option>
+            <option value="tshirt">T-Shirt</option>
+            <option value="shirt">Shirt</option>
+            <option value="pants">Pants</option>
+            <option value="watch">Watch</option>
+          </select>
+        </div>
+        <div id="subcatList" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="card-header">
+          <div class="card-icon gold">＋</div>
+          <div><div class="card-title-text">Add a Brand-New Category</div>
+          <div class="card-title-sub">Creates a whole new top-level category, like "Jackets"</div></div>
+        </div>
+        <p style="font-size:12.5px; color:var(--muted); line-height:1.6; margin:0 0 14px;">
+          This creates the data file and ID range for the category so you can start adding products to it.
+          It will <strong>not</strong> automatically appear in your storefront's menu — you'll get a short
+          code snippet afterward to paste into your site's navigation.
+        </p>
+        <div class="fwrap"><label>Category Name</label>
+          <input type="text" id="newCatLabel" placeholder="e.g. Jackets">
+        </div>
+        <div class="fwrap"><label>Code Prefix (2-3 letters, optional)</label>
+          <input type="text" id="newCatPrefix" placeholder="e.g. JK" maxlength="3">
+        </div>
+        <button class="btn-primary" id="addCatBtn">+ Create Category</button>
+        <div class="msg ok" id="catOkMsg"></div>
+        <div class="msg err" id="catErrMsg"></div>
+        <div id="catSnippetBox" style="display:none; margin-top:14px;">
+          <div class="section-label">Next step</div>
+          <p style="font-size:12.5px; color:var(--muted); margin:0 0 8px;">
+            Category created. To make it appear on your storefront, add it to the category list in
+            <code>index.html</code> / <code>app.js</code>, and add this line to the <code>PRODUCTS</code>
+            array in <code>products.js</code>:
+          </p>
+          <pre id="catSnippetText" style="background:var(--bg2,#f5f5f5); padding:10px 12px; border-radius:8px; font-size:12px; overflow-x:auto; white-space:pre-wrap;"></pre>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ── TRASH PANEL ── -->
+    <div id="trashPanel" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon red">🗑</div>
+          <div><div class="card-title-text">Recently Deleted</div>
+          <div class="card-title-sub">Restorable for 7 days, then permanently removed</div></div>
+        </div>
+        <button class="btn-primary" id="loadTrashBtn">Refresh</button>
+        <div id="trashList" style="margin-top:16px;"></div>
+        <div class="msg ok" id="trashOkMsg"></div>
+        <div class="msg err" id="trashErrMsg"></div>
+      </div>
+    </div>
+
     <!-- ── SETTINGS PANEL ── -->
     <div id="settingsPanel" style="display:none">
       <div class="card">
@@ -571,9 +681,9 @@ body::before{
     </div>
 
   </div>
-          </div>
-  
-   <script>
+</div>
+
+<script>
 let PASSWORD = '';
 
 function driveUrl(fileId, width){
@@ -592,7 +702,9 @@ let editingCategory = null;
 let lastLoadedEditProducts = [];
 let starValue = 5;
 
-const SUBCATEGORIES = {
+// Fallback shown briefly before live data loads from the server (see
+// refreshAllSubcategories below). Kept in sync automatically after that.
+let SUBCATEGORIES = {
   pants:[
     {id:'baggy-pants',label:'Baggy Pants'},
     {id:'formal-pants',label:'Formal Pants'},
@@ -609,7 +721,29 @@ const SUBCATEGORIES = {
   ],
 };
 
-// ── DRIVE ID EXTRACT ──
+// Pulls the live subcategory list for every known category from the
+// backend, so the Add/Edit forms always match what's actually on GitHub —
+// including subcategories added/removed via the Categories tab.
+async function refreshAllSubcategories(){
+  const categories = (window.LIVE_CATEGORIES || []).map(c => c.key);
+  if(!categories.length) return;
+  const updated = {};
+  await Promise.all(categories.map(async (cat) => {
+    try{
+      const res = await fetch('/.netlify/functions/manage-subcategory',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({password:PASSWORD, action:'list', category:cat}),
+      });
+      const data = await res.json();
+      if(res.ok && data.subcategories && data.subcategories.length){
+        updated[cat] = data.subcategories;
+      }
+    } catch(e){ /* keep whatever we had for this category */ }
+  }));
+  SUBCATEGORIES = { ...SUBCATEGORIES, ...updated };
+  refreshSubcategoryField();
+}
+  // ── DRIVE ID EXTRACT ──
 function extractDriveId(link){
   link = link.trim();
   if(!link) return null;
@@ -620,7 +754,8 @@ function extractDriveId(link){
   if(m) return m[1];
   return null;
 }
-     // Convert bare IDs back to full links for display
+
+// Convert bare IDs back to full links for display
 function idToLink(id){ return `https://drive.google.com/file/d/${id}/view`; }
 
 // ── LOGIN ──
@@ -650,10 +785,12 @@ async function doLogin(){
       errEl.className = 'msg err';
     } else {
       PASSWORD = pw;
+      try{ sessionStorage.setItem('fc_admin_pw', pw); }catch(e){}
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
       showPanel('add');
       refreshSubcategoryField();
+      refreshCategoryDropdowns();
     }
   } catch(e){
     errEl.textContent = 'Connection error. Check internet.';
@@ -666,9 +803,35 @@ async function doLogin(){
   document.getElementById('loginBtn').onclick = doLogin;
 document.getElementById('loginPw').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-// ── LOGOUT ──
+// ── RESTORE SESSION ON RELOAD ──
+// We don't trust a stored password blindly — verify it still works before
+// unlocking the dashboard, in case it was changed on Netlify since.
+(async function restoreSession(){
+  let saved = '';
+  try{ saved = sessionStorage.getItem('fc_admin_pw') || ''; }catch(e){}
+  if(!saved) return;
+  try{
+    const res = await fetch('/.netlify/functions/list-products',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password:saved, category:'tshirt'}),
+    });
+    if(res.ok){
+      PASSWORD = saved;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      showPanel('add');
+      refreshSubcategoryField();
+      refreshCategoryDropdowns();
+    } else {
+      try{ sessionStorage.removeItem('fc_admin_pw'); }catch(e){}
+    }
+  } catch(e){ /* offline or error — just stay on login screen */ }
+})();
+  // ── LOGOUT ──
 document.getElementById('logoutBtn').onclick = () => {
+  if(!confirm('Sign out of the admin panel?')) return;
   PASSWORD = '';
+  try{ sessionStorage.removeItem('fc_admin_pw'); }catch(e){}
   document.getElementById('loginPw').value = '';
   document.getElementById('loginErr').className = 'msg';
   document.getElementById('dashboard').style.display = 'none';
@@ -679,19 +842,49 @@ document.getElementById('logoutBtn').onclick = () => {
 document.getElementById('tabAdd').onclick = () => { exitEditMode(); showPanel('add'); };
 document.getElementById('tabEdit').onclick = () => showPanel('edit');
 document.getElementById('tabDelete').onclick = () => showPanel('delete');
+document.getElementById('tabCategories').onclick = () => showPanel('categories');
+document.getElementById('tabTrash').onclick = () => { showPanel('trash'); loadTrash(); };
 document.getElementById('tabSettings').onclick = () => showPanel('settings');
 
 function showPanel(which){
   document.getElementById('tabAdd').className = 'tab' + (which==='add'||which==='editForm' ? ' active' : '');
   document.getElementById('tabEdit').className = 'tab' + (which==='edit'||which==='editForm' ? ' active green' : '');
   document.getElementById('tabDelete').className = 'tab' + (which==='delete' ? ' active red' : '');
+  document.getElementById('tabCategories').className = 'tab' + (which==='categories' ? ' active' : '');
+  document.getElementById('tabTrash').className = 'tab' + (which==='trash' ? ' active red' : '');
   document.getElementById('tabSettings').className = 'tab' + (which==='settings' ? ' active' : '');
   document.getElementById('addPanel').style.display = (which==='add'||which==='editForm') ? 'block' : 'none';
   document.getElementById('editPanel').style.display = which==='edit' ? 'block' : 'none';
   document.getElementById('deletePanel').style.display = which==='delete' ? 'block' : 'none';
+  document.getElementById('categoriesPanel').style.display = which==='categories' ? 'block' : 'none';
+  document.getElementById('trashPanel').style.display = which==='trash' ? 'block' : 'none';
   document.getElementById('settingsPanel').style.display = which==='settings' ? 'block' : 'none';
   if(which==='edit') exitEditMode();
   }
+
+// ── CATEGORY DROPDOWNS (live, includes any category added via Categories tab) ──
+window.LIVE_CATEGORIES = [];
+async function refreshCategoryDropdowns(){
+  try{
+    const res = await fetch('/.netlify/functions/list-categories',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password:PASSWORD}),
+    });
+    const data = await res.json();
+    if(!res.ok || !data.categories || !data.categories.length) return; // keep existing hardcoded options as fallback
+    window.LIVE_CATEGORIES = data.categories;
+    const optionsHtml = data.categories.map(c => `<option value="${c.key}">${c.label}</option>`).join('');
+    ['category','editCategory','delCategory','subcatParentCategory','subcatViewCategory'].forEach(id => {
+      const sel = document.getElementById(id);
+      if(!sel) return;
+      const prevValue = sel.value;
+      sel.innerHTML = optionsHtml;
+      if([...sel.options].some(o => o.value === prevValue)) sel.value = prevValue;
+    });
+    refreshSubcategoryField();
+    refreshAllSubcategories();
+  } catch(e){ /* network error — keep existing hardcoded options */ }
+}
 // ── SUBCATEGORY ──
 function refreshSubcategoryField(){
   const cat = document.getElementById('category').value;
@@ -715,7 +908,8 @@ document.querySelectorAll('.pill').forEach(p => {
     document.getElementById('badge').value = p.dataset.val;
   });
 });
-  // ── STARS ──
+
+// ── STARS ──
 document.querySelectorAll('.star').forEach(btn => {
   btn.addEventListener('click', () => {
     starValue = parseInt(btn.dataset.v);
@@ -782,7 +976,8 @@ document.getElementById('saveBtn').onclick = async () => {
     btn.textContent = isEditing ? 'Update product' : 'Save product';
   }
 };
-  document.getElementById('cancelEditBtn').onclick = () => { exitEditMode(); showPanel('edit'); };
+  
+   document.getElementById('cancelEditBtn').onclick = () => { exitEditMode(); showPanel('edit'); };
 
 function resetForm(){
   document.getElementById('name').value = '';
@@ -830,6 +1025,7 @@ function fillFormWithProduct(category, product){
   document.querySelectorAll('.star').forEach(s => {
     s.classList.toggle('on', parseInt(s.dataset.v) <= starValue);
   });
+
   // badge
   const badgeVal = product.badge || '';
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
@@ -856,9 +1052,8 @@ function fillFormWithProduct(category, product){
 
   showPanel('editForm');
   document.getElementById('addPanel').scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-// ── LOAD EDIT PRODUCTS ──
+  }
+  // ── LOAD EDIT PRODUCTS ──
 document.getElementById('loadEditProductsBtn').onclick = async () => {
   const category = document.getElementById('editCategory').value;
   const listEl = document.getElementById('editProductList');
@@ -882,12 +1077,13 @@ document.getElementById('loadEditProductsBtn').onclick = async () => {
         <div class="prod-info">
           ${prodThumbHtml(p)}
           <div style="min-width:0">
-            <div class="prod-name">${p.name||'(unnamed)'}</div>
+            <div class="prod-name">${p.name||'(unnamed)'} ${p.disabled ? '<span class="prod-disabled-badge">Disabled</span>' : ''}</div>
             <div class="prod-meta">${p.code||''} · ID ${p.id}</div>
             ${p.price ? `<div class="prod-price">₹${p.price}</div>` : ''}
           </div>
         </div>
         <div class="prod-actions">
+          <button class="btn-toggle" data-id="${p.id}" data-disabled="${!!p.disabled}">${p.disabled ? '✓ Enable' : '⏸ Disable'}</button>
           <button class="btn-edit" data-id="${p.id}">✎ Edit</button>
         </div>`;
       listEl.appendChild(row);
@@ -898,13 +1094,43 @@ document.getElementById('loadEditProductsBtn').onclick = async () => {
         if(prod) fillFormWithProduct(category, prod);
       });
     });
+    listEl.querySelectorAll('.btn-toggle').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const wasDisabled = btn.dataset.disabled === 'true';
+        const disable = !wasDisabled;
+        btn.disabled = true; btn.textContent = '…';
+        try{
+          const res = await fetch('/.netlify/functions/toggle-product',{
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({password:PASSWORD, category, id:btn.dataset.id, disable}),
+          });
+          const data = await res.json();
+          if(!res.ok) throw new Error(data.error||'Failed');
+          errEl.className='msg';
+          btn.dataset.disabled = String(disable);
+          btn.textContent = disable ? '✓ Enable' : '⏸ Disable';
+          const badge = btn.closest('.prod-row').querySelector('.prod-name');
+          const existingBadge = badge.querySelector('.prod-disabled-badge');
+          if(disable && !existingBadge){
+            badge.insertAdjacentHTML('beforeend', ' <span class="prod-disabled-badge">Disabled</span>');
+          } else if(!disable && existingBadge){
+            existingBadge.remove();
+          }
+        } catch(e){
+          errEl.textContent='✕ '+e.message; errEl.className='msg err';
+          btn.textContent = wasDisabled ? '✓ Enable' : '⏸ Disable';
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
   } catch(e){
     listEl.innerHTML = '';
     errEl.textContent = e.message; errEl.className='msg err';
   }
 };
-     // ── LOAD DELETE PRODUCTS ──
-document.getElementById('loadProductsBtn').onclick = async () => {
+  // ── LOAD DELETE PRODUCTS ──
+  document.getElementById('loadProductsBtn').onclick = async () => {
   const category = document.getElementById('delCategory').value;
   const listEl = document.getElementById('productList');
   const okEl = document.getElementById('delOkMsg');
@@ -939,7 +1165,7 @@ document.getElementById('loadProductsBtn').onclick = async () => {
     });
     listEl.querySelectorAll('.btn-danger').forEach(btn => {
       btn.addEventListener('click', async () => {
-        if(!confirm('Delete this product? Cannot be undone.')) return;
+        if(!confirm('Move this product to Trash? You can restore it within 7 days.')) return;
         btn.disabled = true; btn.textContent = '…';
         try{
           const res = await fetch('/.netlify/functions/delete-product',{
@@ -962,8 +1188,200 @@ document.getElementById('loadProductsBtn').onclick = async () => {
     errEl.textContent=e.message; errEl.className='msg err';
   }
 };
+
+// ══════════════════════════════════════
+// CATEGORIES TAB
+// ══════════════════════════════════════
+  
+  async function loadSubcatList(){
+  const category = document.getElementById('subcatViewCategory').value;
+  const listEl = document.getElementById('subcatList');
+  listEl.innerHTML = '<div class="empty">Loading…</div>';
+  try{
+    const res = await fetch('/.netlify/functions/manage-subcategory',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password:PASSWORD, action:'list', category}),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error||'Failed to load');
+    const subs = data.subcategories || [];
+    if(!subs.length){ listEl.innerHTML = '<div class="empty">No subcategories yet.</div>'; return; }
+    listEl.innerHTML = '';
+    subs.forEach(s => {
+      const row = document.createElement('div');
+      row.className = 'prod-row';
+      row.innerHTML = `
+        <div style="min-width:0">
+          <div class="prod-name">${s.label || s.id}</div>
+          <div class="prod-meta">${s.id}${s.icon ? ' · ' + s.icon : ''}</div>
+        </div>
+        <div class="prod-actions">
+          <button class="btn-danger" data-subid="${s.id}">🗑 Remove</button>
+        </div>`;
+      listEl.appendChild(row);
+    });
+    listEl.querySelectorAll('.btn-danger').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if(!confirm('Remove this subcategory? Existing products keep their data but the filter tab will disappear.')) return;
+        btn.disabled = true; btn.textContent = '…';
+        try{
+          const res = await fetch('/.netlify/functions/manage-subcategory',{
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({password:PASSWORD, action:'remove', category, subId:btn.dataset.subid}),
+          });
+          const data = await res.json();
+          if(!res.ok) throw new Error(data.error||'Failed');
+          btn.closest('.prod-row').remove();
+          if(!listEl.querySelector('.prod-row')) listEl.innerHTML = '<div class="empty">No subcategories yet.</div>';
+        } catch(e){
+          alert('Error: ' + e.message);
+          btn.disabled = false; btn.textContent = '🗑 Remove';
+        }
+      });
+    });
+  } catch(e){
+    listEl.innerHTML = '';
+    listEl.innerHTML = `<div class="empty">${e.message}</div>`;
+  }
+}
+document.getElementById('subcatViewCategory').addEventListener('change', loadSubcatList);
+
+document.getElementById('addSubcatBtn').onclick = async () => {
+  const category = document.getElementById('subcatParentCategory').value;
+  const label = document.getElementById('newSubcatLabel').value.trim();
+  const icon = document.getElementById('newSubcatIcon').value.trim();
+  const okEl = document.getElementById('subcatOkMsg');
+  const errEl = document.getElementById('subcatErrMsg');
+  okEl.className='msg'; errEl.className='msg';
+  if(!label){ errEl.textContent = 'Enter a subcategory name.'; errEl.className = 'msg err'; return; }
+  const btn = document.getElementById('addSubcatBtn');
+  btn.disabled = true; btn.textContent = 'Adding…';
+  try{
+    const res = await fetch('/.netlify/functions/manage-subcategory',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password:PASSWORD, action:'add', category, label, icon}),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error||'Failed');
+    okEl.textContent = '✓ ' + data.message; okEl.className = 'msg ok';
+    document.getElementById('newSubcatLabel').value = '';
+    document.getElementById('newSubcatIcon').value = '';
+    if(document.getElementById('subcatViewCategory').value === category) loadSubcatList();
+  } catch(e){
+    errEl.textContent = '✕ ' + e.message; errEl.className = 'msg err';
+  } finally {
+    btn.disabled = false; btn.textContent = '+ Add Subcategory';
+  }
+};
+  document.getElementById('addCatBtn').onclick = async () => {
+  const label = document.getElementById('newCatLabel').value.trim();
+  const codePrefix = document.getElementById('newCatPrefix').value.trim();
+  const okEl = document.getElementById('catOkMsg');
+  const errEl = document.getElementById('catErrMsg');
+  const snippetBox = document.getElementById('catSnippetBox');
+  okEl.className='msg'; errEl.className='msg'; snippetBox.style.display='none';
+  if(!label){ errEl.textContent = 'Enter a category name.'; errEl.className = 'msg err'; return; }
+  if(!confirm(`Create new category "${label}"? This adds a new data file to your repo.`)) return;
+  const btn = document.getElementById('addCatBtn');
+  btn.disabled = true; btn.textContent = 'Creating…';
+  try{
+    const res = await fetch('/.netlify/functions/add-category',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password:PASSWORD, label, codePrefix}),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error||'Failed');
+    okEl.textContent = '✓ ' + data.message; okEl.className = 'msg ok';
+    document.getElementById('catSnippetText').textContent =
+`In index.html nav, add:
+<option value="${data.categoryKey}">${label}</option>
+
+In products.js PRODUCTS array, add:
+...${data.arrayVar},
+
+Load the new file before products.js in index.html:
+<` + `script src="${data.fileName}">` + `<` + `/script>`;
+    snippetBox.style.display = 'block';
+    document.getElementById('newCatLabel').value = '';
+    document.getElementById('newCatPrefix').value = '';
+    refreshCategoryDropdowns();
+  } catch(e){
+    errEl.textContent = '✕ ' + e.message; errEl.className = 'msg err';
+  } finally {
+    btn.disabled = false; btn.textContent = '+ Create Category';
+  }
+};
+
+// Load subcategory list once dashboard is shown the first time Categories tab opens
+document.getElementById('tabCategories').addEventListener('click', () => loadSubcatList(), { once:false });
+
+// ══════════════════════════════════════
+// TRASH TAB
+// ══════════════════════════════════════
+
+async function loadTrash(){
+  const listEl = document.getElementById('trashList');
+  const okEl = document.getElementById('trashOkMsg');
+  const errEl = document.getElementById('trashErrMsg');
+  okEl.className='msg'; errEl.className='msg';
+  listEl.innerHTML = '<div class="empty">Loading…</div>';
+  try{
+    const res = await fetch('/.netlify/functions/manage-trash',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password:PASSWORD, action:'list'}),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error||'Failed to load trash');
+    const items = data.trashed || [];
+    if(!items.length){ listEl.innerHTML = '<div class="empty">Trash is empty.</div>'; return; }
+    listEl.innerHTML = '';
+    items.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'prod-row';
+      const thumb = (p.photoIds && p.photoIds[0]) ? prodThumbHtml({photoIds:p.photoIds}) : `<div class="prod-thumb-fallback">🖼</div>`;
+      row.innerHTML = `
+        <div class="prod-info">
+          ${thumb}
+          <div style="min-width:0">
+            <div class="prod-name">${p.name||'(unnamed)'}</div>
+            <div class="prod-meta">${p.code||''} · ${p.category} · ${p.daysLeft} day${p.daysLeft===1?'':'s'} left</div>
+          </div>
+        </div>
+        <div class="prod-actions">
+          <button class="btn-edit" data-action="restore" data-id="${p.id}" data-category="${p.category}">↺ Restore</button>
+          <button class="btn-danger" data-action="purge" data-id="${p.id}" data-category="${p.category}">🗑 Delete forever</button>
+        </div>`;
+      listEl.appendChild(row);
+    });
+    listEl.querySelectorAll('button[data-action]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const action = btn.dataset.action;
+        if(action === 'purge' && !confirm('Permanently delete this product? This cannot be undone.')) return;
+        const allBtns = btn.closest('.prod-row').querySelectorAll('button');
+        allBtns.forEach(b => b.disabled = true);
+        try{
+          const res = await fetch('/.netlify/functions/manage-trash',{
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({password:PASSWORD, action, id:btn.dataset.id, category:btn.dataset.category}),
+          });
+          const data = await res.json();
+          if(!res.ok) throw new Error(data.error||'Failed');
+          okEl.textContent = '✓ ' + data.message; okEl.className = 'msg ok';
+          btn.closest('.prod-row').remove();
+          if(!listEl.querySelector('.prod-row')) listEl.innerHTML = '<div class="empty">Trash is empty.</div>';
+        } catch(e){
+          errEl.textContent = '✕ ' + e.message; errEl.className = 'msg err';
+          allBtns.forEach(b => b.disabled = false);
+        }
+      });
+    });
+  } catch(e){
+    listEl.innerHTML = '';
+    errEl.textContent = e.message; errEl.className = 'msg err';
+  }
+}
+document.getElementById('loadTrashBtn').onclick = loadTrash;
 </script>
 </body>
 </html>
   
-     
