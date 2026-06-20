@@ -91,23 +91,6 @@ const DROP_SHOULDER_PRODUCTS = [
     ],
     desc: 'Cozy fleece hoodie with drop-shoulder cut. Front graphic print. Kangaroo pocket. Ideal for cool evenings and casual outings.'
   },
-
-  {
-    deletedAt: '2026-06-20T09:45:00.676Z',
-    id: 1004,
-    code: 'DS-004',
-    name: 'essential drop shoulder',
-    fabric: 'kora',
-    price: 500, old: 600,
-    section: 'drop-shoulder',
-    badge: 'new', stars: 5,
-    icon: 'fa-shirt', label: '',
-    photos: [
-      '1EaECefsVkLuwH7P5eoO_ybhVPTuqCKwt',
-    ],
-    noColour: true,
-    desc: 'good product.'
-  },
 ];
 
 
