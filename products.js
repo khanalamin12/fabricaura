@@ -90,9 +90,8 @@ const DROP_SHOULDER_PRODUCTS = [
     desc: 'Cozy fleece hoodie with drop-shoulder cut. Front graphic print. Kangaroo pocket. Ideal for cool evenings and casual outings.'
   },
 
-  // ── Add new drop-shoulder products below this line ──
-
   {
+    deletedAt: '2026-06-20T09:45:00.676Z',
     id: 1004,
     code: 'DS-004',
     name: 'essential drop shoulder',
@@ -107,7 +106,6 @@ const DROP_SHOULDER_PRODUCTS = [
     noColour: true,
     desc: 'good product.'
   },
-
 ];
 
 
