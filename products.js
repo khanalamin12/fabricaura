@@ -5,7 +5,7 @@ const SUBCATEGORIES = {
     { id: 'baggy-pants',  label: 'Baggy Pants',  icon: 'fa-person'       },
     { id: 'formal-pants', label: 'Formal Pants', icon: 'fa-user-tie'     },
     { id: 'cargo-pants',  label: 'Cargo Pants',  icon: 'fa-bag-shopping' },
-    { id: 'boos', label: 'boos', icon: 'fa-shirt' },
+  
   
 
 
