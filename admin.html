@@ -245,16 +245,28 @@ body::before{
 .stat-card.gold .stat-value{color:var(--gold);}
 
 /* ── TABS ── */
+/* ── TABS ── */
+.tabs-wrap{
+  position:relative; margin-bottom:16px;
+}
+.tabs-wrap::after{
+  content:''; position:absolute; top:0; right:0; bottom:0; width:28px;
+  background:linear-gradient(to right, transparent, var(--bg, #0b0b12));
+  pointer-events:none; border-radius:0 14px 14px 0;
+}
 .tabs{
   display:flex; background:var(--card);
   border:1px solid var(--border); border-radius:14px;
-  padding:4px; gap:4px; margin-bottom:16px;
+  padding:4px; gap:4px;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
 }
+.tabs::-webkit-scrollbar{display:none;}
 .tab{
-  flex:1; background:transparent; border:none;
+  flex:0 0 auto; background:transparent; border:none;
   color:var(--muted); border-radius:11px;
-  padding:10px 6px; font-size:12.5px; font-weight:600;
-  font-family:inherit; cursor:pointer;
+  padding:10px 14px; font-size:12.5px; font-weight:600;
+  font-family:inherit; cursor:pointer; white-space:nowrap;
   transition:background .15s, color .15s;
   display:flex; align-items:center; justify-content:center; gap:5px;
 }
@@ -262,7 +274,6 @@ body::before{
 .tab.active{background:var(--ag); color:var(--a); border:1px solid rgba(91,127,255,.22);}
 .tab.active.green{background:var(--ok-bg); color:var(--ok); border-color:var(--ok-b);}
 .tab.active.red{background:var(--err-bg); color:var(--err); border-color:var(--err-b);}
-
 /* ── CARD ── */
 .card{
   background:var(--card); border:1px solid var(--border);
@@ -417,15 +428,17 @@ body::before{
     </div>
 
     <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab active" id="tabAdd"><span class="ti">＋</span>Add</button>
-      <button class="tab" id="tabEdit"><span class="ti">✎</span>Edit</button>
-      <button class="tab" id="tabDelete"><span class="ti">✕</span>Delete</button>
-      <button class="tab" id="tabCategories"><span class="ti">▤</span>Categories</button>
-      <button class="tab" id="tabTrash"><span class="ti">🗑</span>Trash</button>
-      <button class="tab" id="tabSettings"><span class="ti">⚙</span>Settings</button>
-    </div>
-
+<!-- Tabs -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" id="tabAdd"><span class="ti">＋</span>Add</button>
+    <button class="tab" id="tabEdit"><span class="ti">✎</span>Edit</button>
+    <button class="tab" id="tabDelete"><span class="ti">✕</span>Delete</button>
+    <button class="tab" id="tabCategories"><span class="ti">▤</span>Categories</button>
+    <button class="tab" id="tabTrash"><span class="ti">🗑</span>Trash</button>
+    <button class="tab" id="tabSettings"><span class="ti">⚙</span>Settings</button>
+  </div>
+</div>
     <!-- ── ADD PANEL ── -->
     <div id="addPanel">
       <div class="card">
