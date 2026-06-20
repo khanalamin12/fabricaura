@@ -37,14 +37,34 @@ exports.handler = async (event) => {
     const closeIdx = content.indexOf('\n];', arrayStartIdx);
     const arrayBody = content.slice(arrayStartIdx, closeIdx);
 
-    // split into individual object chunks by top-level "{ ... }," blocks
+    // Parse each product object fully
     const objRe = /\{[^{}]*\}/gs;
     const matches = arrayBody.match(objRe) || [];
     const products = matches.map((chunk) => {
-      const id = (chunk.match(/id:\s*(\d+)/) || [])[1];
-      const code = (chunk.match(/code:\s*'([^']*)'/) || [])[1];
-      const name = (chunk.match(/name:\s*'([^']*)'/) || [])[1];
-      return { id, code, name };
+      const get = (re) => (chunk.match(re) || [])[1];
+
+      const id        = get(/id:\s*(\d+)/);
+      const code      = get(/code:\s*'([^']*)'/);
+      const name      = get(/name:\s*'([^']*)'/);
+      const fabric    = get(/fabric:\s*'([^']*)'/);
+      const price     = get(/price:\s*(\d+)/);
+      const old       = get(/old:\s*(\d+)/);
+      const badge     = get(/badge:\s*'([^']*)'/);
+      const stars     = get(/stars:\s*(\d+)/);
+      const desc      = get(/desc:\s*'([^']*)'/);
+      const subcategory = get(/subcategory:\s*'([^']*)'/);
+      const noColour  = /noColour:\s*true/.test(chunk);
+
+      // Extract photos array — grab all quoted strings inside photos: [ ... ]
+      const photosMatch = chunk.match(/photos:\s*\[([\s\S]*?)\]/);
+      let driveLinks = [];
+      if (photosMatch) {
+        driveLinks = Array.from(photosMatch[1].matchAll(/'([^']+)'/g)).map(m =>
+          `https://drive.google.com/file/d/${m[1]}/view`
+        );
+      }
+
+      return { id, code, name, fabric, price, old, badge, stars, desc, subcategory, noColour, driveLinks };
     }).filter(p => p.id);
 
     return { statusCode: 200, headers, body: JSON.stringify({ products }) };
@@ -52,3 +72,4 @@ exports.handler = async (event) => {
     return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
 };
+  
