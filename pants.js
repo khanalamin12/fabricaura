@@ -41,6 +41,7 @@ const PANTS_PRODUCTS = [
     desc: 'Slim-fit formal trouser with a sharp crease and tailored finish. Wrinkle-resistant fabric — perfect for office wear and formal occasions.'
   },
   {
+    deletedAt: '2026-06-20T14:04:18.764Z',
     id: 2002,
     code: 'PT-001',
     name: 'primium pant',
@@ -55,5 +56,4 @@ const PANTS_PRODUCTS = [
     ],
     desc: 'fgifift'
   },
-
 ];
