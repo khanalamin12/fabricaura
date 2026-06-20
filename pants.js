@@ -40,4 +40,21 @@ const PANTS_PRODUCTS = [
     ],
     desc: 'Slim-fit formal trouser with a sharp crease and tailored finish. Wrinkle-resistant fabric — perfect for office wear and formal occasions.'
   },
+  {
+    id: 2002,
+    code: 'PT-001',
+    name: 'premium watch',
+    fabric: 'heheh',
+    price: 360, old: 6000,
+    section: 'pants',
+    subcategory: 'cargo-pants',
+    badge: 'new', stars: 3,
+    icon: 'fa-shirt', label: '',
+    photos: [
+      '1dZDaTMhJDom_U41PgcYbZ6pEOpEtqJCp',
+      '1pA67M15CZj6zfrwU1i4TbfrmnGsj6pwg',
+    ],
+    desc: 'good'
+  },
+
 ];
