@@ -54,6 +54,8 @@ exports.handler = async (event) => {
       const desc      = get(/desc:\s*'([^']*)'/);
       const subcategory = get(/subcategory:\s*'([^']*)'/);
       const noColour  = /noColour:\s*true/.test(chunk);
+      const disabled  = /disabled:\s*true/.test(chunk);
+      const deletedAt = get(/deletedAt:\s*'([^']*)'/);
 
       // Extract photos array — grab all quoted strings inside photos: [ ... ]
       const photosMatch = chunk.match(/photos:\s*\[([\s\S]*?)\]/);
@@ -64,13 +66,17 @@ exports.handler = async (event) => {
         driveLinks = photoIds.map(id => `https://drive.google.com/file/d/${id}/view`);
       }
 
-      return { id, code, name, fabric, price, old, badge, stars, desc, subcategory, noColour, photoIds, driveLinks };
+      return { id, code, name, fabric, price, old, badge, stars, desc, subcategory, noColour, disabled, deletedAt, photoIds, driveLinks };
     }).filter(p => p.id);
 
-    return { statusCode: 200, headers, body: JSON.stringify({ products }) };
+    // By default, hide trashed (soft-deleted) products from the normal list —
+    // they're only visible in the Trash panel via list-trash.js
+    const visibleProducts = body.includeTrash ? products : products.filter(p => !p.deletedAt);
+
+    return { statusCode: 200, headers, body: JSON.stringify({ products: visibleProducts }) };
   } catch (err) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
 };
 
-    
+  
