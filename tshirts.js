@@ -71,7 +71,6 @@ const TSHIRTS_PRODUCTS = [
   },
 
   {
-    disabled: true,
     id: 3004,
     code: 'TS-004',
     name: 'Polo T-shirt',
