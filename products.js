@@ -25,6 +25,9 @@ const SUBCATEGORIES = {
 
 
   ],
+  tshirt: [
+    { id: 'logoless', label: 'logoless', icon: 'fa-shirt' },
+  ],
 };
 
 // ── DROP-SHOULDER  (1001–1999) ─────────────────────────────────
