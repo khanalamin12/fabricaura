@@ -30,16 +30,17 @@ const SHIRTS_PRODUCTS = [
     code: 'SH-001',
     name: 'POLO Shirt',
     fabric: 'Oxford Cotton',
-    price: 749, old: 900,
+    price: 200, old: 900,
     section: 'shirt',
     subcategory: 'polo-shirt',
     badge: 'new', stars: 5,
-    icon: 'fa-shirt', label: 'Polo Shirt',
+    icon: 'fa-shirt', label: '',
     photos: [
       '1hTnQdfUopfCafxHPpIG1RBkMRkuV2hpU',
     ],
     desc: 'Classic formal oxford shirt with button-down collar. Wrinkle-resistant, machine washable. Available in white, light blue, and grey.'
   },
+
 
   {
     id: 4002,
