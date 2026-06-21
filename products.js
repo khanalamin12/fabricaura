@@ -34,10 +34,10 @@ const DROP_SHOULDER_PRODUCTS = [
     code: 'DS-001',
     name: 'logoless drop-shoulder',
     fabric: 'Heavy Cotton 240GSM',
-    price: 490, old: 600,
+    price: 500, old: 600,
     section: 'drop-shoulder',
     badge: 'new', stars: 5,
-    icon: 'fa-shirt', label: 'Drop-Shoulder',
+    icon: 'fa-shirt', label: '',
     photos: [
       '1vdvYUHANPx3PjC8g8Al__XUAvue51Xz4',
       '1zXbVWwwsLteiAzctnnkPbishLSLVIWbh',
@@ -51,6 +51,7 @@ const DROP_SHOULDER_PRODUCTS = [
     ],
     desc: 'Classic no logo drop-shoulder tee. Thick 240GSM cotton. Available in every colour'
   },
+
   {
     id: 1002,
     code: 'DS-002',
