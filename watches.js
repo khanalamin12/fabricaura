@@ -25,33 +25,12 @@
 // ══════════════════════════════════════════════════════════════════
 
 const WATCHES_PRODUCTS = [
-  {
-    id: 5001,
-    code: 'WA-001',
-    name: 'Classic Analog Watch',
-    fabric: 'Stainless Steel Case',
-    price: 1499, old: 1999,
-    section: 'watch',
-    subcategory: 'analog-watch',
-    badge: 'new', stars: 5,
-    icon: 'fa-clock', label: 'Analog Watch',
-    photos: [
-      // '1YourFileIDHere',
-    ],
-    colors: [
       { name: 'Silver', hex: '#C0C0C0' },
       { name: 'Gold', hex: '#C9A84C' },
       { name: 'Black', hex: '#1A1A1A' },
-    ],
-    desc: 'Sleek analog watch with stainless steel case and genuine leather strap. Japanese quartz movement. Water resistant 30m.'
-  },
-
-  
-  
-
-  // ── Add new watches below this line ──
 
   {
+    deletedAt: '2026-06-21T08:58:56.698Z',
     id: 5002,
     code: 'WT-001',
     name: 'premium watch',
@@ -67,5 +46,4 @@ const WATCHES_PRODUCTS = [
     noColour: true,
     desc: 'this is a premium watch'
   },
-
 ];
