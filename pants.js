@@ -3,7 +3,6 @@
 
 const PANTS_PRODUCTS = [
   {
-    deletedAt: '2026-06-21T14:14:03.030Z',
     id: 2001,
     code: 'BP-001',
     name: 'Baggy Pant',
