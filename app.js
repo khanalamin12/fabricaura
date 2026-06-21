@@ -998,9 +998,53 @@ Address  : ${address}${note ? '\nNote     : ' + note : ''}
   };
 }
 
+// ── Order recording (saves every order to the database so it shows up
+// in the admin dashboard's Orders tab). Fire-and-forget: if it fails,
+// the customer's order still goes out via WhatsApp/email/Messenger as
+// normal — this never blocks checkout. ──
+function recordOrder(payload) {
+  try {
+    fetch('/.netlify/functions/save-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+  } catch (e) { /* never block checkout */ }
+}
+
 function sendVia(method) {
   if (!validateForm()) return;
   const { text, name, variants } = buildMessage();
+
+  // Save this order to the database
+  (function () {
+    const p = currentProduct;
+    const delivery = document.getElementById('f_delivery').value;
+    const deliveryLabel = delivery === 'inside' ? 'Inside Dhaka' : 'Outside Dhaka';
+    const deliveryCostN = delivery === 'inside' ? 80 : 120;
+    const subtotal = p.price * currentQty;
+    recordOrder({
+      channel: method,
+      customer: {
+        name,
+        phone: document.getElementById('f_phone').value.trim(),
+        address: document.getElementById('f_address').value.trim(),
+        note: document.getElementById('f_note').value.trim(),
+      },
+      items: [{
+        productId: p.id,
+        code: p.code,
+        name: p.name,
+        category: p.label,
+        qty: currentQty,
+        unitPrice: p.price,
+        variants,
+      }],
+      delivery: { zone: deliveryLabel, cost: deliveryCostN },
+      subtotal,
+      total: subtotal + deliveryCostN,
+    });
+  })();
 
   if (method === 'email') {
     const p             = currentProduct;
@@ -1491,6 +1535,51 @@ Address  : ${address}${note ? '\nNote     : ' + note : ''}
 function sendCartVia(method) {
   if (!validateCartOrderForm()) return;
   const { text, name, sub, deliveryCostN, total, deliveryLabel } = buildCartMessage();
+
+  // Save this order to the database
+  (function () {
+    const items = cart.map((c) => {
+      const p = PRODUCTS.find((x) => x.id === c.id);
+      if (!p) return null;
+      const variants = [];
+      for (let i = 0; i < c.qty; i++) {
+        if (isWatch(p)) {
+          variants.push({ unit: i + 1, colour: (document.getElementById(`co_colour_${p.id}_${i}`) || {}).value || '' });
+        } else if (skipsColour(p)) {
+          variants.push({ unit: i + 1, size: (document.getElementById(`co_size_${p.id}_${i}`) || {}).value || '' });
+        } else {
+          variants.push({
+            unit: i + 1,
+            size: (document.getElementById(`co_size_${p.id}_${i}`) || {}).value || '',
+            colour: (document.getElementById(`co_colour_${p.id}_${i}`) || {}).value || '',
+          });
+        }
+      }
+      return {
+        productId: p.id,
+        code: p.code,
+        name: p.name,
+        category: p.label,
+        qty: c.qty,
+        unitPrice: p.price,
+        variants,
+      };
+    }).filter(Boolean);
+
+    recordOrder({
+      channel: method,
+      customer: {
+        name,
+        phone: document.getElementById('co_phone').value.trim(),
+        address: document.getElementById('co_address').value.trim(),
+        note: document.getElementById('co_note').value.trim(),
+      },
+      items,
+      delivery: { zone: deliveryLabel, cost: deliveryCostN },
+      subtotal: sub,
+      total,
+    });
+  })();
 
   if (method === 'email') {
     const itemsStr = cart.map(c => {
