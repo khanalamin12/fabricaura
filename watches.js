@@ -28,22 +28,4 @@ const WATCHES_PRODUCTS = [
       { name: 'Silver', hex: '#C0C0C0' },
       { name: 'Gold', hex: '#C9A84C' },
       { name: 'Black', hex: '#1A1A1A' },
-
-  {
-    deletedAt: '2026-06-21T08:58:56.698Z',
-    id: 5002,
-    code: 'WT-001',
-    name: 'premium watch',
-    fabric: 'steel.',
-    price: 1600, old: 2000,
-    section: 'watch',
-    subcategory: 'smartwatch',
-    badge: 'new', stars: 5,
-    icon: 'fa-shirt', label: '',
-    photos: [
-      '1pA67M15CZj6zfrwU1i4TbfrmnGsj6pwg',
-    ],
-    noColour: true,
-    desc: 'this is a premium watch'
-  },
 ];
