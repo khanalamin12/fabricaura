@@ -56,16 +56,15 @@ const DROP_SHOULDER_PRODUCTS = [
     ],
     desc: 'Classic no logo drop-shoulder tee. Thick 240GSM cotton. Available in every colour'
   },
-
   {
     id: 1002,
     code: 'DS-002',
     name: 'ESSENTIAL Drop-Shoulder',
     fabric: 'Acid Wash Cotton',
-    price: 550, old: 700,
+    price: 700, old: 700,
     section: 'drop-shoulder',
     badge: 'new', stars: 5,
-    icon: 'fa-shirt', label: 'Drop-Shoulder',
+    icon: 'fa-shirt', label: '',
     photos: [
       '1hOas51reeddjzGsNVIctkSuPoiqroEiN',
       '1gYIyi9tJ4oHC67VJke5rRvA33UrQ79nu',
@@ -76,6 +75,7 @@ const DROP_SHOULDER_PRODUCTS = [
     ],
     desc: 'essential drop shoulder with a vintage look. Heavy fabric, relaxed chest fit. Great layering piece.'
   },
+
   {
     id: 1003,
     code: 'DS-003',
