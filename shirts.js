@@ -26,6 +26,7 @@
 
 const SHIRTS_PRODUCTS = [
   {
+    deletedAt: '2026-06-22T08:27:07.006Z',
     id: 4001,
     code: 'SH-001',
     name: 'POLO Shirt',
