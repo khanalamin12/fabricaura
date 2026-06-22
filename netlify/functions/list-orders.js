@@ -1,11 +1,17 @@
 // Netlify Function: list-orders
-// Password-protected. Returns all saved orders for the admin dashboard
-// (order list + analytics). Also supports updating an order's status.
-
 const { getStore } = require('@netlify/blobs');
 
+function getOrderStore() {
+  const opts = { name: 'orders', consistency: 'strong' };
+  if (process.env.NETLIFY_BLOBS_CONTEXT) return getStore(opts);
+  if (process.env.NETLIFY_SITE_ID && process.env.NETLIFY_AUTH_TOKEN) {
+    return getStore({ ...opts, siteID: process.env.NETLIFY_SITE_ID, token: process.env.NETLIFY_AUTH_TOKEN });
+  }
+  return getStore(opts);
+}
+
 exports.handler = async (event) => {
-  const headers = { 'Content-Type': 'application/json' };
+  const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
@@ -17,7 +23,7 @@ exports.handler = async (event) => {
       return { statusCode: 401, headers, body: JSON.stringify({ error: 'Wrong password' }) };
     }
 
-    const store = getStore({ name: 'orders', consistency: 'strong' });
+    const store = getOrderStore();
 
     // ── Update order status ──
     if (body.action === 'updateStatus') {
@@ -30,7 +36,7 @@ exports.handler = async (event) => {
       }
       order.status = body.status;
       await store.setJSON(body.id, order);
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Status updated' }) };
     }
 
     // ── Delete order ──
@@ -43,10 +49,10 @@ exports.handler = async (event) => {
       try { index = (await store.get('_index', { type: 'json' })) || []; } catch (e) { index = []; }
       index = index.filter((it) => it.id !== body.id);
       await store.setJSON('_index', index);
-      return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, message: 'Order deleted' }) };
     }
 
-    // ── List all orders (default action) ──
+    // ── List all orders ──
     let index = [];
     try {
       index = (await store.get('_index', { type: 'json' })) || [];
@@ -54,18 +60,14 @@ exports.handler = async (event) => {
       index = [];
     }
 
-    // Fetch full order objects (index only has summary fields)
     const orders = [];
     for (const entry of index) {
       try {
         const full = await store.get(entry.id, { type: 'json' });
         if (full) orders.push(full);
-      } catch (e) {
-        // skip missing/corrupt entries
-      }
+      } catch (e) {}
     }
 
-    // Newest first
     orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     return { statusCode: 200, headers, body: JSON.stringify({ success: true, orders }) };
@@ -73,4 +75,3 @@ exports.handler = async (event) => {
     return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
   }
 };
-      
