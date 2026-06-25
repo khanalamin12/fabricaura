@@ -61,7 +61,7 @@ const DROP_SHOULDER_PRODUCTS = [
     code: 'DS-002',
     name: 'ESSENTIAL Drop-Shoulder',
     fabric: 'Acid Wash Cotton',
-    price: 700, old: 700,
+    price: 300, old: 700,
     section: 'drop-shoulder',
     badge: 'new', stars: 5,
     icon: 'fa-shirt', label: '',
@@ -75,6 +75,7 @@ const DROP_SHOULDER_PRODUCTS = [
     ],
     desc: 'essential drop shoulder with a vintage look. Heavy fabric, relaxed chest fit. Great layering piece.'
   },
+
 
   {
     id: 1003,
