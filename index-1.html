@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0"/>
+  <meta name="description" content="Fabric Aura offers premium quality fashion wear, stylish clothing, and comfortable fabrics. Shop trendy outfits online with great prices and reliable delivery.">
+
+<meta name="keywords" content="Fabric Aura, online clothing store, fashion store, premium fabrics, men's fashion, women's fashion, stylish clothes, Bangladesh clothing">
+
+<meta name="author" content="Fabric Aura">
+  <meta name="google-site-verification" content="ERQGhauhlXYUJlICsJpqcoOPd3H1radn6La9GnvZ6ow" />
+  
+<title>Fabric Aura – Men's Premium Cloth Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Noto+Serif+Bengali:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="styles.css"/>
+<!-- Anti-flash: apply dark class before first paint -->
+<script>
+  (function(){
+    var s=localStorage.getItem('fabricaura-darkmode');
+    if(s==='on'||(s===null&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
+      document.documentElement.classList.add('dark-mode-pre');
+    }
+  })();
+</script>
+<style>.dark-mode-pre body,.dark-mode-pre{background:#0F0F0F!important;}</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     TOP NAV
+════════════════════════════════════════ -->
+<nav class="top-nav">
+  <a class="logo" href="#home">
+    <div class="logo-icon">
+      <img src="https://wsrv.nl/?url=https%3A%2F%2Flh3.googleusercontent.com%2Fd%2F1EaECefsVkLuwH7P5eoO_ybhVPTuqCKwt&w=88&output=webp&q=90"
+           alt="Fabric Aura Logo"
+           style="width:100%;height:100%;object-fit:cover;border-radius:11px;"
+           onerror="this.outerHTML='<i class=\'fas fa-scissors\' style=\'color:#fff;font-size:1.2rem\'></i>'"/>
+    </div>
+    <div class="logo-text">
+      <span class="brand">Fabric Aura</span>
+      <span class="tagline">Men's Cloth Shop</span>
+    </div>
+  </a>
+  <div class="top-nav-right">
+    <button class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()" title="Toggle dark mode" aria-label="Toggle dark mode">
+      <i class="fas fa-moon" id="darkToggleIcon"></i>
+    </button>
+    <button class="nav-icon-btn" onclick="openSearch()"><i class="fas fa-magnifying-glass"></i></button>
+    <button class="nav-icon-btn cart-nav-btn" onclick="openCartDrawer()" aria-label="Shopping cart">
+      <i class="fas fa-cart-shopping"></i>
+      <span class="cart-badge" id="cartBadgeTop">0</span>
+    </button>
+    <button class="nav-icon-btn" onclick="openWishlist()">
+      <i class="fas fa-heart"></i>
+      <span class="cart-badge" id="wishBadgeTop">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     SEARCH OVERLAY (full-screen)
+════════════════════════════════════════ -->
+<div class="search-overlay" id="searchOverlay" aria-hidden="true">
+  <div class="search-overlay-inner">
+    <!-- Top bar -->
+    <div class="so-topbar">
+      <div class="so-input-wrap">
+        <i class="fas fa-magnifying-glass so-icon"></i>
+        <input class="so-input" type="text" id="searchInput"
+               placeholder="Search shirts, pants, t-shirts…"
+               oninput="filterProducts(this.value)"
+               autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <button class="so-clear" id="soClear" onclick="clearSearchInput()" aria-label="Clear" style="display:none">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+      <button class="so-cancel" onclick="closeSearch()">Cancel</button>
+    </div>
+
+    <!-- Quick preference chips -->
+    <div class="so-prefs-section">
+      <div class="so-prefs-label"><i class="fas fa-sliders"></i> Quick Search</div>
+      <div class="so-prefs-chips" id="soPrefsChips">
+        <button class="so-chip" onclick="applySearchChip('Shirt')"><i class="fas fa-shirt"></i> Shirt</button>
+        <button class="so-chip" onclick="applySearchChip('T-Shirt')"><i class="fas fa-shirt"></i> T-Shirt</button>
+        <button class="so-chip" onclick="applySearchChip('Polo Shirt')"><i class="fas fa-shirt"></i> Polo Shirt</button>
+        <button class="so-chip" onclick="applySearchChip('Formal Shirt')"><i class="fas fa-shirt"></i> Formal Shirt</button>
+        <button class="so-chip" onclick="applySearchChip('Baggy Pants')"><i class="fas fa-person"></i> Baggy Pants</button>
+        <button class="so-chip" onclick="applySearchChip('Pants')"><i class="fas fa-person"></i> Pants</button>
+        <button class="so-chip" onclick="applySearchChip('Formal Pants')"><i class="fas fa-person"></i> Formal Pants</button>
+        <button class="so-chip" onclick="applySearchChip('Drop Shoulder')"><i class="fas fa-shirt"></i> Drop Shoulder</button>
+      </div>
+    </div>
+
+    <!-- Search history -->
+    <div class="so-history-section" id="soHistorySection" style="display:none">
+      <div class="so-prefs-label">
+        <span><i class="fas fa-clock-rotate-left"></i> Recent Searches</span>
+        <button class="so-clear-hist" onclick="clearSearchHistory()">Clear all</button>
+      </div>
+      <div class="so-history-list" id="soHistoryList"></div>
+    </div>
+
+    <!-- Search results (rendered inline here when searching) -->
+    <div id="soResultsWrap" style="display:none">
+      <div class="so-results-label" id="soResultsLabel"></div>
+      <div class="product-grid" id="soResultsGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ANNOUNCEMENT TICKER — WhatsApp Order
+════════════════════════════════════════ -->
+<div class="announce-ticker" role="note" aria-label="WhatsApp order announcement">
+  <span class="announce-tag"><span class="announce-tag-dot"></span>Order</span>
+  <div class="announce-track">
+    <div class="announce-loop">
+      <span class="announce-item">
+        <i class="fab fa-whatsapp"></i>
+        WhatsApp এর মাধ্যমে সরাসরি অর্ডার করতে  যোগাযোগ করুন
+        <span class="announce-phone">+880 1822-188287</span>
+      </span>
+      <span class="announce-item" aria-hidden="true">
+        <i class="fab fa-whatsapp"></i>
+        WhatsApp এর মাধ্যমে অর্ডার করতে সরাসরি যোগাযোগ করুন
+        <span class="announce-phone">+880 1822-188287</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <span class="hero-badge"><i class="fas fa-crown"></i> Men's New Collection 2026</span>
+  <h1>Dress with <em>Style</em><br>&amp; Confidence</h1>
+  <p>Premium streetwear &amp; fashion — drop-shoulder tees, baggy pants, shirts, watches &amp; more.
+     Order directly via WhatsApp, Facebook or Email.</p>
+  <div class="hero-btns">
+    <a class="btn-primary" href="#products" onclick="setCategory('drop-shoulder',null)"><i class="fas fa-shirt"></i> Shop Now</a>
+    <a class="btn-outline" href="#products" onclick="setCategory('watch',null)"><i class="fas fa-clock"></i> Watches</a>
+  </div>
+</section>
+
+<!-- hotline bar removed — now a floating widget -->
+
+<!-- ══════════════════════════════════════
+     TRUST STRIP
+════════════════════════════════════════ -->
+<div class="trust-strip">
+  <div class="trust-item"><i class="fas fa-truck-fast"></i><div><strong>Free Delivery</strong>Orders over ৳999</div></div>
+  <div class="trust-item"><i class="fas fa-rotate-left"></i><div><strong>Easy Returns</strong>3-day policy</div></div>
+  <div class="trust-item"><i class="fas fa-shield-halved"></i><div><strong>100% Authentic</strong>Premium quality</div></div>
+  <div class="trust-item"><i class="fas fa-headset"></i><div><strong>24/7 Support</strong>WhatsApp &amp; FB</div></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CATEGORY FILTER TABS
+════════════════════════════════════════ -->
+<div class="category-filter-wrap">
+  <div class="category-filter" id="categoryFilter">
+    <button class="cat-tab active" data-cat="all" onclick="setCategory('all',this)">
+      <i class="fas fa-border-all"></i><span>All Items</span>
+    </button>
+    <button class="cat-tab" data-cat="drop-shoulder" onclick="setCategory('drop-shoulder',this)">
+      <i class="fas fa-shirt"></i><span>Drop Shoulders</span>
+    </button>
+    <button class="cat-tab" data-cat="pants" onclick="setCategory('pants',this)">
+      <i class="fas fa-person"></i><span>Pants</span>
+    </button>
+    <button class="cat-tab" data-cat="tshirt" onclick="setCategory('tshirt',this)">
+      <i class="fas fa-shirt"></i><span>T-Shirts</span>
+    </button>
+    <button class="cat-tab" data-cat="shirt" onclick="setCategory('shirt',this)">
+      <i class="fas fa-shirt"></i><span>Shirts</span>
+    </button>
+    <button class="cat-tab" data-cat="watch" onclick="setCategory('watch',this)">
+      <i class="fas fa-clock"></i><span>Watches</span>
+    </button>
+  
+  
+  </div>
+  <!-- Scroll hint: bouncing arrow tells user more tabs exist -->
+  <div class="cat-more-hint" id="catMoreHint">
+    <i class="fas fa-chevron-right"></i>
+    <span>more</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     BRAND SHOWCASE BANNER (Rotating)
+════════════════════════════════════════ -->
+<div class="brand-banner" id="brandBanner">
+
+  <!-- SLIDE 1 — Street Identity -->
+  <div class="bb-slide bb-active bb-theme-crimson">
+    <div class="bb-bg-circles">
+      <span class="bb-circle bb-c1"></span><span class="bb-circle bb-c2"></span><span class="bb-circle bb-c3"></span>
+    </div>
+    <div class="brand-banner-inner">
+      <div class="bb-left">
+        <span class="bb-eyebrow"><i class="fas fa-crown"></i> Fabric Aura</span>
+        <h3 class="bb-headline">Wear the <em>Aura</em>,<br>Own the Street.</h3>
+        <p class="bb-sub">Premium streetwear crafted for the bold. Every stitch tells your story.</p>
+      </div>
+      <div class="bb-right">
+        <div class="bb-pill"><i class="fas fa-bolt"></i> New Drops Weekly</div>
+        <div class="bb-pill"><i class="fas fa-gem"></i> Premium Fabrics</div>
+        <div class="bb-pill"><i class="fas fa-fire"></i> Limited Pieces</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 — Drop Shoulders -->
+  <div class="bb-slide bb-theme-dark">
+    <div class="bb-bg-circles">
+      <span class="bb-circle bb-c1"></span><span class="bb-circle bb-c2"></span><span class="bb-circle bb-c3"></span>
+    </div>
+    <div class="brand-banner-inner">
+      <div class="bb-left">
+        <span class="bb-eyebrow"><i class="fas fa-shirt"></i> Drop Shoulders</span>
+        <h3 class="bb-headline">Oversized Fits.<br><em>Effortless</em> Style.</h3>
+        <p class="bb-sub">Heavy 240GSM cotton drop-shoulders — built for comfort, made for the streets.</p>
+      </div>
+      <div class="bb-right">
+        <div class="bb-pill"><i class="fas fa-ruler"></i> S to XXL</div>
+        <div class="bb-pill"><i class="fas fa-palette"></i> 10+ Colours</div>
+        <div class="bb-pill"><i class="fas fa-star"></i> Top Rated</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 — Pants -->
+  <div class="bb-slide bb-theme-gold">
+    <div class="bb-bg-circles">
+      <span class="bb-circle bb-c1"></span><span class="bb-circle bb-c2"></span><span class="bb-circle bb-c3"></span>
+    </div>
+    <div class="brand-banner-inner">
+      <div class="bb-left">
+        <span class="bb-eyebrow"><i class="fas fa-person"></i> Pants</span>
+        <h3 class="bb-headline">Baggy. Formal.<br><em>Cargo</em>. Your Call.</h3>
+        <p class="bb-sub">Custom length &amp; waist sizing — baggy, formal, cargo and more. Your fit, your rules.</p>
+      </div>
+      <div class="bb-right">
+        <div class="bb-pill"><i class="fas fa-scissors"></i> Custom Fit</div>
+        <div class="bb-pill"><i class="fas fa-layer-group"></i> Cargo &amp; Denim</div>
+        <div class="bb-pill"><i class="fas fa-tag"></i> Best Price</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 — Order CTA -->
+  <div class="bb-slide bb-theme-deep">
+    <div class="bb-bg-circles">
+      <span class="bb-circle bb-c1"></span><span class="bb-circle bb-c2"></span><span class="bb-circle bb-c3"></span>
+    </div>
+    <div class="brand-banner-inner">
+      <div class="bb-left">
+        <span class="bb-eyebrow"><i class="fas fa-truck-fast"></i> Fast Delivery</span>
+        <h3 class="bb-headline">Order in Minutes.<br><em>Delivered</em> to Your Door.</h3>
+        <p class="bb-sub">WhatsApp, Facebook or Email — place your order instantly and we'll handle the rest.</p>
+      </div>
+      <div class="bb-right">
+        <div class="bb-pill"><i class="fab fa-whatsapp"></i> WhatsApp Order</div>
+        <div class="bb-pill"><i class="fas fa-truck"></i> Dhaka ৳80</div>
+        <div class="bb-pill"><i class="fas fa-rotate-left"></i> 7-Day Return</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prev / Next arrows -->
+  <button class="bb-arrow bb-arrow-prev" onclick="bbPrev()" aria-label="Previous">
+    <i class="fas fa-chevron-left"></i>
+  </button>
+  <button class="bb-arrow bb-arrow-next" onclick="bbNext()" aria-label="Next">
+    <i class="fas fa-chevron-right"></i>
+  </button>
+
+  <!-- Nav dots -->
+  <div class="bb-nav-dots">
+    <button class="bb-nav-dot active" onclick="bbGoTo(0)"></button>
+    <button class="bb-nav-dot" onclick="bbGoTo(1)"></button>
+    <button class="bb-nav-dot" onclick="bbGoTo(2)"></button>
+    <button class="bb-nav-dot" onclick="bbGoTo(3)"></button>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     UNIFIED PRODUCT SECTION
+════════════════════════════════════════ -->
+<section class="section" id="products">
+  <div class="section-header">
+    <div>
+      <span class="section-eyebrow" id="catEyebrow">Full Collection</span>
+      <h2 id="catTitle">All Items</h2>
+      <span class="gold-line"></span>
+    </div>
+  </div>
+
+  <!-- Pants sub-category tabs — only shown when "Pants" tab is active.
+       Tabs are generated from PANTS_SUBCATEGORIES in products.js -->
+  <div class="subcat-filter-wrap" id="subcatFilterWrap" style="display:none">
+    <div class="subcat-filter" id="subcatFilter"></div>
+  </div>
+
+  <div class="product-grid" id="mainProductGrid"></div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-logo">
+    <span class="brand">Fabric Aura</span>
+    <span class="tagline">Men's Premium Cloth Shop</span>
+  </div>
+  <p>Bringing the finest menswear and accessories to your doorstep.
+     Order easily via Facebook, WhatsApp or Email.</p>
+  <div class="footer-social">
+    <a class="social-btn" href="https://www.facebook.com/fabricaura69" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+    <a class="social-btn" href="https://wa.me/8801822188287" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+    <a class="social-btn" href="mailto:fabricaura69@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
+    <a class="social-btn" href="https://www.instagram.com/fabric_aura6t9" target="_blank" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+  </div>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="#products" onclick="setCategory('drop-shoulder',null)"><i class="fas fa-shirt"></i> Drop-Shoulder</a>
+      <a href="#products" onclick="setCategory('pants',null)"><i class="fas fa-person"></i> Pants</a>
+      <a href="#products" onclick="setCategory('tshirt',null)"><i class="fas fa-shirt"></i> T-Shirts</a>
+      <a href="#products" onclick="setCategory('shirt',null)"><i class="fas fa-shirt"></i> Shirts</a>
+      <a href="#products" onclick="setCategory('watch',null)"><i class="fas fa-clock"></i> Watches</a>
+    </div>
+    <div class="footer-col">
+      <h4>Order &amp; Contact</h4>
+      <a href="https://wa.me/8801822188287" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Order</a>
+      <a href="https://www.facebook.com/fabricaura69" target="_blank"><i class="fab fa-facebook-f"></i> Facebook Page</a>
+      <a href="mailto:fabricaura69@gmail.com" target="_blank"><i class="fas fa-envelope"></i>fabricaura69@gmail.com</a>
+      <a href="https://www.instagram.com/fabric_aura6t9" target="_blank"><i class="fa-brands fa-instagram"></i>fabric_aura6t9</a>
+      <a href="https://maps.google.com/?q=Chandpur,Bangladesh" target="_blank"><i class="fas fa-location-dot"></i> Chandpur, Bangladesh</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Fabric Aura. All rights reserved.</span>
+    <span>Made with <i class="fas fa-heart" style="color:var(--crimson)"></i>Khan Al-amin</span>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════
+     BOTTOM NAV (mobile)
+════════════════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="bottom-nav-item active" onclick="scrollToSection('home',this)">
+    <i class="fas fa-house"></i><span>Home</span>
+  </button>
+  <button class="bottom-nav-item" onclick="toggleRvTray()">
+    <i class="fas fa-clock-rotate-left"></i><span>Recent</span>
+    <span class="bnav-badge" id="rvBadgeNav">0</span>
+  </button>
+  <div class="bottom-nav-center">
+    <button class="bottom-nav-fab" onclick="setCategory('all',null)">
+      <i class="fas fa-border-all"></i>
+    </button>
+  </div>
+  <button class="bottom-nav-item" onclick="openCartDrawer()">
+    <i class="fas fa-cart-shopping"></i><span>Cart</span>
+    <span class="bnav-badge" id="cartBadgeNav">0</span>
+  </button>
+  <button class="bottom-nav-item" onclick="openWishlist()">
+    <i class="fas fa-heart"></i><span>Saved</span>
+    <span class="bnav-badge" id="wishBadgeNav">0</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     OVERLAY
+════════════════════════════════════════ -->
+<div class="overlay" id="overlay" onclick="closeAllDrawers()"></div>
+
+<!-- ══════════════════════════════════════
+     PRODUCT DETAIL DRAWER
+════════════════════════════════════════ -->
+<div class="drawer" id="detailDrawer">
+  <div class="drawer-handle"></div>
+  <div id="detailContent"></div>
+  <div class="detail-sticky-btn" id="detailStickyBtn"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ORDER FORM DRAWER
+════════════════════════════════════════ -->
+<div class="drawer" id="orderDrawer">
+  <div class="drawer-handle"></div>
+  <h2><i class="fas fa-bag-shopping" style="color:var(--crimson)"></i> Place Your Order</h2>
+  <p class="drawer-subtitle">Fill in your details — we'll receive your order instantly.</p>
+  <div class="order-product-preview" id="orderPreview"></div>
+
+  <!-- Delivery Zone -->
+  <label class="form-label"><i class="fas fa-truck"></i> Delivery Location <span class="form-required">*</span></label>
+  <select class="form-select" id="f_delivery" onchange="updateDeliveryCost()">
+    <option value="">— Select delivery area —</option>
+    <option value="inside">Inside Dhaka — ৳80</option>
+    <option value="outside">Outside Dhaka — ৳120</option>
+  </select>
+  <div class="delivery-cost-box" id="deliveryCostBox" style="display:none">
+    <span class="dc-label"><i class="fas fa-motorcycle" style="margin-right:5px"></i>Delivery Charge</span>
+    <span class="dc-amount" id="deliveryCostAmt"></span>
+  </div>
+
+  <!-- Quantity -->
+  <label class="form-label"><i class="fas fa-layer-group"></i> Quantity <span class="form-required">*</span></label>
+  <div class="qty-stepper">
+    <button class="qty-btn" onclick="changeQty(-1)"><i class="fas fa-minus"></i></button>
+    <span class="qty-display" id="qtyDisplay">1</span>
+    <button class="qty-btn" onclick="changeQty(1)"><i class="fas fa-plus"></i></button>
+  </div>
+
+  <!-- Per-unit size & colour rows (rendered by JS) -->
+  <div id="unitRowsContainer"></div>
+
+  <!-- Customer Details -->
+  <label class="form-label"><i class="fas fa-user"></i> Full Name <span class="form-required">*</span></label>
+  <input class="form-input" type="text" id="f_name" placeholder="e.g. Rakib Hossain"/>
+
+  <label class="form-label"><i class="fas fa-phone"></i> Phone Number <span class="form-required">*</span></label>
+  <input class="form-input" type="tel" id="f_phone" placeholder="e.g. 01XXXXXXXXX"/>
+
+  <label class="form-label"><i class="fas fa-location-dot"></i> Delivery Address <span class="form-required">*</span></label>
+  <textarea class="form-input" id="f_address" placeholder="House no., Road, Area, District…" rows="3"></textarea>
+
+  <label class="form-label"><i class="fas fa-comment-dots"></i> Extra Note <span style="font-weight:400;color:var(--gray)">(Optional)</span></label>
+  <input class="form-input" type="text" id="f_note" placeholder="Any special request…"/>
+
+  <!-- Order Summary -->
+  <div class="order-summary-box" id="orderSummaryBox" style="display:none">
+    <div class="os-title"><i class="fas fa-receipt"></i> Order Summary</div>
+    <div class="os-row">
+      <span>Product Price</span>
+      <span id="os-product-price">৳0</span>
+    </div>
+    <div class="os-row">
+      <span><i class="fas fa-motorcycle" style="color:var(--crimson);margin-right:4px"></i>Delivery Charge</span>
+      <span id="os-delivery-charge">৳0</span>
+    </div>
+    <div class="os-divider"></div>
+    <div class="os-row os-total">
+      <span>Total Payable</span>
+      <span id="os-total">৳0</span>
+    </div>
+  </div>
+
+  <!-- Hidden Formspree Form (email submission) -->
+  <form id="formspreeForm" action="https://formspree.io/f/xjgdjyba" method="POST" style="display:none">
+    <input type="hidden" name="product_name"     id="fs_product_name"/>
+    <input type="hidden" name="product_code"     id="fs_product_code"/>
+    <input type="hidden" name="product_category" id="fs_product_category"/>
+    <input type="hidden" name="fabric"           id="fs_fabric"/>
+    <input type="hidden" name="variants"         id="fs_variants"/>
+    <input type="hidden" name="quantity"         id="fs_quantity"/>
+    <input type="hidden" name="price"            id="fs_price"/>
+    <input type="hidden" name="delivery_zone"    id="fs_delivery_zone"/>
+    <input type="hidden" name="delivery_charge"  id="fs_delivery_charge"/>
+    <input type="hidden" name="total_payable"    id="fs_total"/>
+    <input type="hidden" name="customer_name"    id="fs_name"/>
+    <input type="hidden" name="phone"            id="fs_phone"/>
+    <input type="hidden" name="address"          id="fs_address"/>
+    <input type="hidden" name="note"             id="fs_note"/>
+    <input type="hidden" name="_subject"         id="fs_subject"/>
+  </form>
+
+  <!-- Send Via -->
+  <div class="send-via-title"><i class="fas fa-paper-plane"></i> Send Order Via:</div>
+  <div class="send-btns-grid">
+    <button class="send-btn sbtn-email" onclick="sendVia('email')">Submit Order</button>
+    <button class="send-btn sbtn-wa" onclick="sendVia('whatsapp')">
+      <div class="sb-icon"><i class="fab fa-whatsapp"></i></div>
+      <div class="sb-text">Send via WhatsApp<span>Opens WhatsApp with your order</span></div>
+      <i class="fas fa-chevron-right" style="margin-left:auto;opacity:.5;font-size:.8rem"></i>
+    </button>
+    <button class="send-btn sbtn-fb" onclick="sendVia('facebook')">
+      <div class="sb-icon"><i class="fab fa-facebook-messenger"></i></div>
+      <div class="sb-text">Send via Facebook<span>Copies order &amp; opens Messenger</span></div>
+      <i class="fas fa-chevron-right" style="margin-left:auto;opacity:.5;font-size:.8rem"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CART DRAWER
+════════════════════════════════════════ -->
+<div class="drawer" id="cartDrawer">
+  <div class="drawer-handle"></div>
+  <div class="cart-drawer-header">
+    <h2><i class="fas fa-cart-shopping" style="color:var(--crimson)"></i> My Cart</h2>
+    <button class="cart-clear-btn" onclick="clearCart()"><i class="fas fa-trash-can"></i> Clear</button>
+  </div>
+  <div id="cartItems"></div>
+  <div id="cartFooter" style="display:none">
+    <div class="cart-subtotal-row">
+      <span>Subtotal</span>
+      <span id="cartSubtotalAmt">৳0</span>
+    </div>
+    <div class="cart-delivery-note"><i class="fas fa-truck"></i> One delivery charge for all items</div>
+    <button class="cart-order-btn" onclick="openCartOrderForm()">
+      <i class="fas fa-bag-shopping"></i> Place Order (All Items)
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CART ORDER FORM DRAWER
+════════════════════════════════════════ -->
+<div class="drawer" id="cartOrderDrawer">
+  <div class="drawer-handle"></div>
+  <h2 style="margin-bottom:6px"><i class="fas fa-receipt" style="color:var(--crimson)"></i> Complete Order</h2>
+  <p style="font-size:.78rem;color:var(--gray);margin-bottom:16px">All cart items · single delivery charge</p>
+
+  <!-- Cart summary list -->
+  <div id="cartOrderItems"></div>
+
+  <!-- Delivery Zone -->
+  <label class="form-label"><i class="fas fa-truck"></i> Delivery Location <span class="form-required">*</span></label>
+  <select class="form-select" id="co_delivery" onchange="updateCartDeliveryCost()">
+    <option value="">— Select delivery area —</option>
+    <option value="inside">Inside Dhaka — ৳80</option>
+    <option value="outside">Outside Dhaka — ৳120</option>
+  </select>
+  <div class="delivery-cost-box" id="coDeliveryCostBox" style="display:none">
+    <span class="dc-label"><i class="fas fa-motorcycle" style="margin-right:5px"></i>Delivery Charge</span>
+    <span class="dc-amount" id="coDeliveryCostAmt"></span>
+  </div>
+
+  <!-- Customer Details -->
+  <label class="form-label"><i class="fas fa-user"></i> Full Name <span class="form-required">*</span></label>
+  <input class="form-input" type="text" id="co_name" placeholder="e.g. Rakib Hossain"/>
+
+  <label class="form-label"><i class="fas fa-phone"></i> Phone Number <span class="form-required">*</span></label>
+  <input class="form-input" type="tel" id="co_phone" placeholder="e.g. 01XXXXXXXXX"/>
+
+  <label class="form-label"><i class="fas fa-location-dot"></i> Delivery Address <span class="form-required">*</span></label>
+  <textarea class="form-input" id="co_address" placeholder="House no., Road, Area, District…" rows="3"></textarea>
+
+  <label class="form-label"><i class="fas fa-comment-dots"></i> Extra Note <span style="font-weight:400;color:var(--gray)">(Optional)</span></label>
+  <input class="form-input" type="text" id="co_note" placeholder="Any special request…"/>
+
+  <!-- Order Summary -->
+  <div class="order-summary-box" id="coSummaryBox" style="display:none">
+    <div class="os-title"><i class="fas fa-receipt"></i> Order Summary</div>
+    <div id="coSummaryItems"></div>
+    <div class="os-row">
+      <span>Products Subtotal</span>
+      <span id="co-subtotal">৳0</span>
+    </div>
+    <div class="os-row">
+      <span><i class="fas fa-motorcycle" style="color:var(--crimson);margin-right:4px"></i>Delivery Charge</span>
+      <span id="co-delivery">৳0</span>
+    </div>
+    <div class="os-divider"></div>
+    <div class="os-row os-total">
+      <span>Total Payable</span>
+      <span id="co-total">৳0</span>
+    </div>
+  </div>
+
+  <!-- Hidden Formspree for cart order -->
+  <form id="coFormspree" action="https://formspree.io/f/xjgdjyba" method="POST" style="display:none">
+    <input type="hidden" name="order_type"     value="Cart Order (Multiple Products)"/>
+    <input type="hidden" name="items"          id="co_fs_items"/>
+    <input type="hidden" name="subtotal"       id="co_fs_subtotal"/>
+    <input type="hidden" name="delivery_zone"  id="co_fs_delivery_zone"/>
+    <input type="hidden" name="delivery_charge" id="co_fs_delivery_charge"/>
+    <input type="hidden" name="total_payable"  id="co_fs_total"/>
+    <input type="hidden" name="customer_name"  id="co_fs_name"/>
+    <input type="hidden" name="phone"          id="co_fs_phone"/>
+    <input type="hidden" name="address"        id="co_fs_address"/>
+    <input type="hidden" name="note"           id="co_fs_note"/>
+    <input type="hidden" name="_subject"       id="co_fs_subject"/>
+  </form>
+
+  <!-- Send Via -->
+  <div class="send-via-title"><i class="fas fa-paper-plane"></i> Send Order Via:</div>
+  <div class="send-btns-grid">
+    <button class="send-btn sbtn-email" onclick="sendCartVia('email')">Submit Order</button>
+    <button class="send-btn sbtn-wa" onclick="sendCartVia('whatsapp')">
+      <div class="sb-icon"><i class="fab fa-whatsapp"></i></div>
+      <div class="sb-text">Send via WhatsApp<span>Opens WhatsApp with your order</span></div>
+      <i class="fas fa-chevron-right" style="margin-left:auto;opacity:.5;font-size:.8rem"></i>
+    </button>
+    <button class="send-btn sbtn-fb" onclick="sendCartVia('facebook')">
+      <div class="sb-icon"><i class="fab fa-facebook-messenger"></i></div>
+      <div class="sb-text">Send via Facebook<span>Copies order &amp; opens Messenger</span></div>
+      <i class="fas fa-chevron-right" style="margin-left:auto;opacity:.5;font-size:.8rem"></i>
+    </button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     WISHLIST DRAWER
+════════════════════════════════════════ -->
+<div class="drawer" id="wishlistDrawer">
+  <div class="drawer-handle"></div>
+  <h2><i class="fas fa-heart" style="color:var(--crimson)"></i> Saved Items</h2>
+  <div id="wishlistItems"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TOAST
+════════════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════
+     PRODUCT CARD ⋮ MENU (Share / Download) — shared, positioned dynamically
+════════════════════════════════════════ -->
+<div class="card-menu-popover" id="cardMenuPopover">
+  <button class="card-menu-item" id="cardMenuShareBtn" onclick="event.stopPropagation();shareProductFromMenu()">
+    <i class="fas fa-share-nodes"></i> Share Product
+  </button>
+  <button class="card-menu-item" id="cardMenuDownloadBtn" onclick="event.stopPropagation();downloadProductImagesFromMenu()">
+    <i class="fas fa-download"></i> Download Images
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCRIPTS — products first
+════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════
+     ORDER CONFIRM MODAL
+═════════════════════════════════════ -->
+<div class="order-confirm-backdrop" id="orderConfirmModal" onclick="closeOrderConfirm()">
+  <div class="order-confirm-box" onclick="event.stopPropagation()">
+    <div class="ocb-icon"><i class="fas fa-circle-check"></i></div>
+    <h3>Order Received!</h3>
+    <p>Thank you, <strong id="confirmCustomerName"></strong>! 🎉<br>
+       Our team will contact you shortly to confirm your order and arrange delivery.</p>
+    <div class="ocb-note"><i class="fas fa-clock"></i> Usually within 30 minutes</div>
+    <button class="ocb-close-btn" onclick="closeOrderConfirm()">Got it, thanks!</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FLOATING HOTLINE WIDGET
+════════════════════════════════════════ -->
+<div class="hotline-fab-wrap" id="hotlineFab">
+  <!-- Expanded panel (shows on click) -->
+  <div class="hotline-panel" id="hotlinePanel">
+    <div class="hp-header">
+      <div class="hotline-pulse"></div>
+      <span><i class="fas fa-headset"></i> 24/7 Hotline</span>
+      <button class="hp-close" onclick="toggleHotline()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+    </div>
+    <a class="hp-number" href="tel:+8801822188287">
+      <i class="fas fa-phone"></i> +880 1822-188287
+    </a>
+    <a class="hp-wa" href="https://wa.me/8801822188287" target="_blank">
+      <i class="fab fa-whatsapp"></i> WhatsApp Now
+    </a>
+  </div>
+  <!-- Circle trigger button -->
+  <button class="hotline-circle" onclick="toggleHotline()" aria-label="Contact Hotline" id="hotlineBtn">
+    <i class="fas fa-headset" id="hotlineIcon"></i>
+    <span class="hc-pulse-ring"></span>
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════
+     RECENTLY VIEWED
+════════════════════════════════════════ -->
+<!-- Bottom sheet tray -->
+<div class="rv-tray" id="rvTray">
+  <div class="rv-tray-handle"></div>
+  <div class="rv-tray-header">
+    <span><i class="fas fa-clock-rotate-left"></i> Recently Viewed</span>
+    <button class="rv-close" onclick="closeRvTray()" aria-label="Close"><i class="fas fa-xmark"></i></button>
+  </div>
+  <div class="rv-items" id="rvItems"></div>
+</div>
+
+<script src="pants.js"></script>
+<script src="shirts.js"></script>
+<script src="tshirts.js"></script>
+<script src="watches.js"></script>
+<script src="products.js"></script>
+<script src="app.js"></script>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M1H9G7DXF8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M1H9G7DXF8');
+</script>
+
+</body>
+</html>
